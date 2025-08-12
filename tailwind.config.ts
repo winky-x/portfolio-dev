@@ -17,8 +17,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['Poppins', 'sans-serif'],
-        headline: ['Poppins', 'sans-serif'],
+        body: ['"Neue Montreal"', 'sans-serif'],
+        headline: ['"Cabinet Grotesk"', 'sans-serif'],
         code: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
