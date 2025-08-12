@@ -100,7 +100,7 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="w-full">
-        <div className="p-1 rounded-full bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 shadow-lg backdrop-blur-md">
+        <div className="p-1 rounded-3xl bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 shadow-lg backdrop-blur-md">
             <form ref={formRef} onSubmit={handleSubmit(handleInitialSubmit)} className="relative">
               <label htmlFor="business" className="sr-only">Describe your project</label>
               <Textarea
@@ -108,7 +108,7 @@ export function ContactSection() {
                 id="business"
                 placeholder="Have a project in mind? Describe it here and my AI assistant will get things started..."
                 rows={1}
-                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 text-foreground py-2 h-10 rounded-full"
+                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 text-foreground py-2 h-10 rounded-3xl"
                 onBlur={() => trigger('business')}
               />
               <SubmitButton disabled={!isValid}/>
