@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes'
 
 export function HeroSection() {
   const mountRef = useRef<HTMLDivElement>(null)
+  const sceneRef = useRef<THREE.Scene | null>(null)
   const { resolvedTheme } = useTheme()
 
   useEffect(() => {
@@ -13,6 +14,7 @@ export function HeroSection() {
 
     const currentMount = mountRef.current
     const scene = new THREE.Scene()
+    sceneRef.current = scene
     const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000)
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight)
@@ -31,6 +33,7 @@ export function HeroSection() {
     const particleMaterial = new THREE.PointsMaterial({
       size: 0.015,
       transparent: true,
+      color: resolvedTheme === 'dark' ? 0xffffff : 0x000000
     })
     
     const particleSystem = new THREE.Points(particleGeometry, particleMaterial)
@@ -70,18 +73,17 @@ export function HeroSection() {
     return () => {
       window.removeEventListener('resize', onResize)
       document.removeEventListener('mousemove', onMouseMove)
-      if (currentMount) {
+      if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
   useEffect(() => {
-    // This is a simplified way to handle theme changes for the particles.
-    // In a real app, you might re-initialize or update materials more deeply.
-    const newColor = resolvedTheme === 'dark' ? 0xffffff : 0x000000
-    if (scene) {
-      const particleSystem = scene.getObjectByProperty('type', 'Points') as THREE.Points
+    if (sceneRef.current) {
+      const newColor = resolvedTheme === 'dark' ? 0xffffff : 0x000000
+      const particleSystem = sceneRef.current.getObjectByProperty('type', 'Points') as THREE.Points
       if(particleSystem && particleSystem.material instanceof THREE.PointsMaterial) {
         particleSystem.material.color.setHex(newColor)
       }
