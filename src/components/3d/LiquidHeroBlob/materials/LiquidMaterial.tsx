@@ -29,4 +29,4 @@ class CustomLiquidMaterial extends THREE.ShaderMaterial {
 
 extend({ LiquidMaterial: CustomLiquidMaterial });
 
-export const LiquidMaterial = CustomLiquidMaterial;
+export { CustomLiquidMaterial as LiquidMaterial };
