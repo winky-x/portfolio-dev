@@ -39,9 +39,9 @@ export function ContactSection() {
   const [businessDescription, setBusinessDescription] = useState('')
   const [isFocused, setIsFocused] = useState(false)
 
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition()
 
-  const [state, setState] = useState<ContactFormState>({ status: 'idle', message: '' });
+  const [state, setState] = useState<ContactFormState>({ status: 'idle', message: '' })
 
   const { register, handleSubmit, reset, watch, formState: {errors} } = useForm<{ business: string }>({
     resolver: zodResolver(businessSchema),
@@ -117,7 +117,7 @@ export function ContactSection() {
                     "An e-commerce site for artists...",
                     "A portfolio for a photographer..."
                 ]} 
-                className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none whitespace-nowrap"
               />
             )}
             <Input
@@ -127,7 +127,7 @@ export function ContactSection() {
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 autoComplete="off"
-                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 h-12 rounded-full placeholder:text-muted-foreground"
+                className="bg-transparent border-none pl-5 pr-12 text-base resize-none focus-visible:ring-0 h-12 rounded-full placeholder:text-muted-foreground"
             />
             <Button 
                 type="submit" 
