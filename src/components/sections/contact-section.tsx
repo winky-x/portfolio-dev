@@ -23,6 +23,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Label } from '../ui/label'
+import { cn } from '@/lib/utils'
 
 const businessSchema = z.object({
   business: z.string().min(1, { message: ' ' }),
@@ -36,7 +37,17 @@ const finalDetailsSchema = z.object({
 function SubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" disabled={pending || disabled} size="icon" className="absolute right-1.5 bottom-1.5 h-8 w-8 rounded-full bg-black hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/80">
+    <Button 
+      type="submit" 
+      disabled={pending || disabled} 
+      size="icon" 
+      className={cn(
+        "absolute right-1.5 bottom-1.5 h-8 w-8 rounded-full transition-colors",
+        disabled 
+          ? 'bg-transparent text-muted-foreground' 
+          : 'bg-black hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/80'
+      )}
+    >
       {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
       <span className="sr-only">Send</span>
     </Button>
