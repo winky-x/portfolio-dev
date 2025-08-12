@@ -1,7 +1,7 @@
 
 'use client'
 
-import React, { useActionState, useRef, useEffect, useState } from 'react'
+import React, { useState, useEffect, useTransition } from 'react'
 import { useFormStatus } from 'react-dom'
 import { submitContactForm, type ContactFormState } from '@/app/actions'
 import { useForm } from 'react-hook-form'
@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '../ui/label'
 import { cn } from '@/lib/utils'
-import { motion, AnimatePresence } from 'framer-motion'
 
 const businessSchema = z.object({
   business: z.string().min(10, { message: ' ' }),
@@ -64,19 +63,19 @@ function AnimatedPlaceholder() {
         return () => clearInterval(interval);
     }, []);
 
+    const [isClient, setIsClient] = useState(false);
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) {
+        return <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">{placeholders[0]}</span>
+    }
+
     return (
-        <AnimatePresence mode="wait">
-            <motion.span
-                key={placeholders[index]}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-y-0 left-3 flex items-center pointer-events-none"
-            >
-                {placeholders[index]}
-            </motion.span>
-        </AnimatePresence>
+        <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            {placeholders[index]}
+        </span>
     );
 }
 
@@ -107,8 +106,9 @@ export function ContactSection() {
   const [businessDescription, setBusinessDescription] = useState('')
   const [isFocused, setIsFocused] = useState(false)
 
-  const initialState: ContactFormState = { status: 'idle', message: '' }
-  const [state, formAction] = useActionState(submitContactForm, initialState)
+  const [isPending, startTransition] = useTransition();
+
+  const [state, setState] = useState<ContactFormState>({ status: 'idle', message: '' });
 
   const { register, handleSubmit, reset, watch, formState: {errors} } = useForm<{ business: string }>({
     resolver: zodResolver(businessSchema),
@@ -156,7 +156,11 @@ export function ContactSection() {
     formData.append('business', businessDescription);
     formData.append('name', data.name);
     formData.append('email', data.email);
-    formAction(formData);
+    
+    startTransition(async () => {
+        const result = await submitContactForm(state, formData);
+        setState(result);
+    });
   }
 
   return (
@@ -182,7 +186,19 @@ export function ContactSection() {
                     <AnimatedPlaceholder />
                 </div>
             )}
-            <SubmitButton hasValue={!!businessValue} />
+            <Button 
+                type="submit" 
+                size="icon" 
+                className={cn(
+                    "absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full transition-colors",
+                    businessValue 
+                    ? 'bg-black/80 hover:bg-black text-white' 
+                    : 'bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 text-foreground'
+                )}
+                >
+                <ArrowUp className="h-4 w-4" />
+                <span className="sr-only">Send</span>
+            </Button>
         </div>
       </form>
 
@@ -222,7 +238,9 @@ export function ContactSection() {
               <DialogClose asChild>
                 <Button type="button" variant="ghost">Cancel</Button>
               </DialogClose>
-              <Button type="submit">Send Message</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? <Loader2 className="animate-spin" /> : "Send Message"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
