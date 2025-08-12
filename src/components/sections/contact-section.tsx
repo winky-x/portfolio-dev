@@ -1,7 +1,7 @@
 
 'use client'
 
-import React, { useState, useEffect, useTransition } from 'react'
+import React, { useState, useEffect, useTransition, useRef } from 'react'
 import { submitContactForm, type ContactFormState } from '@/app/actions'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -38,6 +38,7 @@ export function ContactSection() {
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [businessDescription, setBusinessDescription] = useState('')
   const [isFocused, setIsFocused] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [isPending, startTransition] = useTransition();
 
@@ -53,6 +54,15 @@ export function ContactSection() {
     resolver: zodResolver(finalDetailsSchema),
     mode: 'onChange',
   })
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Reset height to recalculate
+      textareaRef.current.style.height = 'auto';
+      // Set height based on scroll height
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [businessValue]);
 
   useEffect(() => {
     if (state.status === 'success') {
@@ -96,11 +106,13 @@ export function ContactSection() {
     });
   }
 
+  const { ref: formRef, ...rest } = register('business');
+
   return (
     <section id="contact" className="w-full">
-      <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
-        Describe your project
-      </h3>
+        <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
+            Describe your project
+        </h3>
       <form onSubmit={handleSubmit(handleInitialSubmit)}>
         <div className={cn(
             'relative rounded-2xl bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10',
@@ -110,13 +122,19 @@ export function ContactSection() {
         )}>
             <Label htmlFor="business" className="sr-only">Describe your project</Label>
             <Textarea
-                {...register('business')}
+                {...rest}
+                ref={(e) => {
+                    formRef(e)
+                    // @ts-ignore
+                    textareaRef.current = e
+                }}
                 id="business"
                 placeholder="A luxury tech store..."
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 autoComplete="off"
-                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 min-h-[80px] placeholder:text-muted-foreground"
+                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 min-h-[52px] placeholder:text-muted-foreground overflow-y-hidden"
+                rows={1}
             />
             <Button 
                 type="submit" 
