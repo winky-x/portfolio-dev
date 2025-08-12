@@ -6,6 +6,7 @@ import { submitContactForm, type ContactFormState } from '@/app/actions'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useFormStatus } from 'react-dom'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -163,6 +164,9 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="w-full">
+      <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
+        Describe your store
+      </h3>
       <form onSubmit={handleSubmit(handleInitialSubmit)}>
         <div className={cn(
             'relative rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10',
@@ -181,7 +185,7 @@ export function ContactSection() {
                 className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 h-12 rounded-full placeholder:text-muted-foreground"
             />
             {!businessValue && (
-                <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-muted-foreground w-full overflow-hidden">
+                <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-muted-foreground w-full overflow-hidden whitespace-nowrap">
                     <AnimatedPlaceholder />
                 </div>
             )}
