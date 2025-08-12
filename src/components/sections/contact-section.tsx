@@ -6,9 +6,9 @@ import { submitContactForm, type ContactFormState } from '@/app/actions'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useFormStatus } from 'react-dom'
 
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
 import { Loader2, Mail, ArrowUp } from 'lucide-react'
@@ -25,79 +25,13 @@ import { Label } from '../ui/label'
 import { cn } from '@/lib/utils'
 
 const businessSchema = z.object({
-  business: z.string().min(10, { message: ' ' }),
+  business: z.string().min(10, { message: 'Please describe your project in at least 10 characters.' }),
 })
 
 const finalDetailsSchema = z.object({
   name: z.string().min(2, { message: 'Name is required.' }),
   email: z.string().email({ message: 'A valid email is required.' }),
 })
-
-const placeholders = [
-    "Need a new website from scratch?",
-    "Looking to revamp an existing site?",
-    "Building a fast e-commerce store?",
-    "Have an idea for a web application?",
-    "Need a custom dashboard for your data?",
-    "Let's create a stunning portfolio site.",
-    "Want to improve your site's performance?",
-    "Building a community with a forum?",
-    "Thinking about a membership platform?",
-    "Need a blog that stands out?",
-    "Let's build an interactive learning tool.",
-    "Got a cool API you want to visualize?",
-    "Launching a new product or service?",
-    "Need a hand with a front-end feature?",
-    "Let's bring your creative vision to life."
-];
-
-
-function AnimatedPlaceholder() {
-    const [index, setIndex] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setIndex((prevIndex) => (prevIndex + 1) % placeholders.length);
-        }, 3000); // Change placeholder every 3 seconds
-
-        return () => clearInterval(interval);
-    }, []);
-
-    const [isClient, setIsClient] = useState(false);
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    if (!isClient) {
-        return <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none whitespace-nowrap">{placeholders[0]}</span>
-    }
-
-    return (
-        <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none whitespace-nowrap">
-            {placeholders[index]}
-        </span>
-    );
-}
-
-function SubmitButton({ hasValue }: { hasValue: boolean }) {
-  const { pending } = useFormStatus()
-  return (
-    <Button 
-      type="submit" 
-      disabled={pending} 
-      size="icon" 
-      className={cn(
-        "absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full transition-colors",
-        hasValue 
-          ? 'bg-black/80 hover:bg-black text-white' 
-          : 'bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 text-foreground'
-      )}
-    >
-      {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
-      <span className="sr-only">Send</span>
-    </Button>
-  )
-}
 
 export function ContactSection() {
   const { toast } = useToast()
@@ -142,7 +76,7 @@ export function ContactSection() {
     if(errors.business) {
       toast({
         variant: 'destructive',
-        description: "Please describe your project a bit more.",
+        description: errors.business.message,
       })
       return;
     }
@@ -165,35 +99,30 @@ export function ContactSection() {
   return (
     <section id="contact" className="w-full">
       <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
-        Describe your store
+        Describe your project
       </h3>
       <form onSubmit={handleSubmit(handleInitialSubmit)}>
         <div className={cn(
-            'relative rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10',
+            'relative rounded-2xl bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10',
             isFocused || businessValue
                 ? 'shadow-lg shadow-primary/20 dark:shadow-primary/10 ring-primary/20'
                 : 'shadow-md shadow-black/5'
         )}>
-            <label htmlFor="business" className="sr-only">Describe your project</label>
-            <Input
+            <Label htmlFor="business" className="sr-only">Describe your project</Label>
+            <Textarea
                 {...register('business')}
                 id="business"
-                placeholder=""
+                placeholder="A luxury tech store..."
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 autoComplete="off"
-                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 h-12 rounded-full placeholder:text-muted-foreground"
+                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 min-h-[80px] placeholder:text-muted-foreground"
             />
-            {!businessValue && (
-                <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-muted-foreground w-full overflow-hidden whitespace-nowrap">
-                    <AnimatedPlaceholder />
-                </div>
-            )}
             <Button 
                 type="submit" 
                 size="icon" 
                 className={cn(
-                    "absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full transition-colors",
+                    "absolute right-2.5 bottom-2.5 h-8 w-8 rounded-full transition-colors",
                     businessValue 
                     ? 'bg-black/80 hover:bg-black text-white' 
                     : 'bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 text-foreground'
