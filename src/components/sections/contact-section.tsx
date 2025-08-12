@@ -2,7 +2,6 @@
 'use client'
 
 import React, { useState, useEffect, useTransition } from 'react'
-import { useFormStatus } from 'react-dom'
 import { submitContactForm, type ContactFormState } from '@/app/actions'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -69,16 +68,15 @@ function AnimatedPlaceholder() {
     }, []);
 
     if (!isClient) {
-        return <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">{placeholders[0]}</span>
+        return <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none whitespace-nowrap">{placeholders[0]}</span>
     }
 
     return (
-        <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+        <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none whitespace-nowrap">
             {placeholders[index]}
         </span>
     );
 }
-
 
 function SubmitButton({ hasValue }: { hasValue: boolean }) {
   const { pending } = useFormStatus()
@@ -176,13 +174,14 @@ export function ContactSection() {
             <Input
                 {...register('business')}
                 id="business"
-                placeholder={businessValue ? '' : undefined}
+                placeholder=""
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 text-foreground h-12 rounded-full placeholder:text-muted-foreground"
+                autoComplete="off"
+                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 h-12 rounded-full placeholder:text-muted-foreground"
             />
             {!businessValue && (
-                <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-muted-foreground">
+                <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-muted-foreground w-full overflow-hidden">
                     <AnimatedPlaceholder />
                 </div>
             )}
