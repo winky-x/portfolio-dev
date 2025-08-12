@@ -60,6 +60,8 @@ export function ContactSection() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [businessDescription, setBusinessDescription] = useState('')
+  const [isFocused, setIsFocused] = useState(false)
+
 
   const initialState: ContactFormState = { status: 'idle', message: '' }
   const [state, formAction] = useActionState(submitContactForm, initialState)
@@ -113,10 +115,10 @@ export function ContactSection() {
   return (
     <section id="contact" className="w-full">
         <div className={cn(
-            'relative rounded-3xl bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300',
-            businessValue && businessValue.length > 0
-              ? 'shadow-lg shadow-primary/20 ring-1 ring-primary/50'
-              : 'shadow-md shadow-black/10 ring-1 ring-black/10'
+            'relative rounded-3xl bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10',
+            isFocused || businessValue
+              ? 'shadow-2xl shadow-primary/20 ring-primary/50'
+              : 'shadow-md shadow-black/10 '
         )}>
             <form ref={formRef} onSubmit={handleSubmit(handleInitialSubmit)}>
               <label htmlFor="business" className="sr-only">Describe your project</label>
@@ -126,7 +128,11 @@ export function ContactSection() {
                 placeholder="Have a project in mind? Describe it here and my AI assistant will get things started..."
                 rows={1}
                 className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 text-foreground py-2 h-10 rounded-3xl"
-                onBlur={() => trigger('business')}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => {
+                  setIsFocused(false);
+                  trigger('business');
+                }}
               />
               <SubmitButton disabled={!isValid}/>
             </form>
@@ -142,37 +148,34 @@ export function ContactSection() {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmitDetails(handleFinalSubmit)} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Your Name</Label>
-                <Input 
-                  id="name"
-                  {...registerDetails('name')} 
-                  placeholder="John Doe" 
-                  className={detailsErrors.name ? 'border-destructive' : ''} 
-                  onBlur={() => triggerDetails('name')} 
-                />
-                {detailsErrors.name && <p className="text-destructive text-sm mt-1">{detailsErrors.name.message}</p>}
-              </div>
                <div>
-                <Label htmlFor="email">Your Email</Label>
-                <Input 
-                  id="email"
-                  type="email"
-                  {...registerDetails('email')} 
-                  placeholder="john.doe@example.com" 
-                  className={detailsErrors.email ? 'border-destructive' : ''} 
-                  onBlur={() => triggerDetails('email')} 
-                />
-                {detailsErrors.email && <p className="text-destructive text-sm mt-1">{detailsErrors.email.message}</p>}
-              </div>
+                  <Label htmlFor="name">Name</Label>
+                  <Input 
+                    {...registerDetails('name')}
+                    id="name" 
+                    placeholder="Ada Lovelace" 
+                    onBlur={() => triggerDetails('name')}
+                    className="mt-1" 
+                  />
+                  {detailsErrors.name && <p className="text-destructive text-sm mt-1">{detailsErrors.name.message}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input 
+                    {...registerDetails('email')}
+                    id="email" 
+                    type="email" 
+                    placeholder="ada@example.com"
+                    onBlur={() => triggerDetails('email')}
+                    className="mt-1"
+                  />
+                   {detailsErrors.email && <p className="text-destructive text-sm mt-1">{detailsErrors.email.message}</p>}
+                </div>
               <DialogFooter>
-                 <DialogClose asChild>
-                    <Button type="button" variant="ghost">Cancel</Button>
+                <DialogClose asChild>
+                  <Button type="button" variant="ghost">Cancel</Button>
                 </DialogClose>
-                <Button type="submit">
-                  <ArrowUp className="mr-2"/>
-                  Confirm & Send
-                </Button>
+                <Button type="submit">Send Message</Button>
               </DialogFooter>
             </form>
           </DialogContent>
