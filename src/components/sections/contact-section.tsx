@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Send, Mail } from 'lucide-react'
+import { Loader2, Mail, ArrowUp } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ import {
 import { Label } from '../ui/label'
 
 const businessSchema = z.object({
-  business: z.string().min(10, { message: 'Please describe your project a bit more.' }),
+  business: z.string().min(1, { message: ' ' }),
 })
 
 const finalDetailsSchema = z.object({
@@ -36,8 +36,8 @@ const finalDetailsSchema = z.object({
 function SubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" disabled={pending || disabled} size="sm" className="absolute right-1.5 bottom-1.5">
-      {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+    <Button type="submit" disabled={pending || disabled} size="icon" className="absolute right-1.5 bottom-1.5 h-8 w-8 rounded-full bg-black hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/80">
+      {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
       <span className="sr-only">Send</span>
     </Button>
   )
@@ -100,7 +100,7 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="w-full">
-        <div className="p-1 rounded-lg bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 shadow-lg backdrop-blur-md">
+        <div className="p-1 rounded-full bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 shadow-lg backdrop-blur-md">
             <form ref={formRef} onSubmit={handleSubmit(handleInitialSubmit)} className="relative">
               <label htmlFor="business" className="sr-only">Describe your project</label>
               <Textarea
@@ -108,7 +108,7 @@ export function ContactSection() {
                 id="business"
                 placeholder="Have a project in mind? Describe it here and my AI assistant will get things started..."
                 rows={1}
-                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 text-foreground"
+                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 text-foreground py-2 h-10 rounded-full"
                 onBlur={() => trigger('business')}
               />
               <SubmitButton disabled={!isValid}/>
@@ -153,7 +153,7 @@ export function ContactSection() {
                     <Button type="button" variant="ghost">Cancel</Button>
                 </DialogClose>
                 <Button type="submit">
-                  <Send className="mr-2"/>
+                  <ArrowUp className="mr-2"/>
                   Confirm & Send
                 </Button>
               </DialogFooter>
