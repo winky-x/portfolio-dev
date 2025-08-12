@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useEffect, use } from 'react'
-import { useFormState, useFormStatus } from 'react-dom'
+import React, { useState, useEffect, useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -36,7 +36,7 @@ export function ContactSection() {
   const [isAlertOpen, setIsAlertOpen] = useState(false)
 
   const initialState: ContactFormState = { status: 'idle', message: '' }
-  const [state, formAction] = useFormState(submitContactForm, initialState)
+  const [state, formAction] = useActionState(submitContactForm, initialState)
 
   const { register, formState: { errors }, trigger, reset } = useForm<z.infer<typeof contactFormSchema>>({
     resolver: zodResolver(contactFormSchema),
