@@ -1,14 +1,13 @@
 
 'use client'
 
-import React, { useState, useEffect, useTransition, useRef } from 'react'
+import React, { useState, useEffect, useTransition } from 'react'
 import { submitContactForm, type ContactFormState } from '@/app/actions'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
 import { Loader2, Mail, ArrowUp } from 'lucide-react'
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '../ui/label'
 import { cn } from '@/lib/utils'
+import { AnimatedPlaceholder } from '../animated-placeholder'
 
 const businessSchema = z.object({
   business: z.string().min(10, { message: 'Please describe your project in at least 10 characters.' }),
@@ -38,7 +38,6 @@ export function ContactSection() {
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [businessDescription, setBusinessDescription] = useState('')
   const [isFocused, setIsFocused] = useState(false)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [isPending, startTransition] = useTransition();
 
@@ -54,16 +53,7 @@ export function ContactSection() {
     resolver: zodResolver(finalDetailsSchema),
     mode: 'onChange',
   })
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      // Reset height to recalculate
-      textareaRef.current.style.height = 'auto';
-      // Set height based on scroll height
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [businessValue]);
-
+  
   useEffect(() => {
     if (state.status === 'success') {
       setShowDetailsModal(false)
@@ -106,8 +96,6 @@ export function ContactSection() {
     });
   }
 
-  const { ref: formRef, ...rest } = register('business');
-
   return (
     <section id="contact" className="w-full">
         <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
@@ -115,26 +103,31 @@ export function ContactSection() {
         </h3>
       <form onSubmit={handleSubmit(handleInitialSubmit)}>
         <div className={cn(
-            'relative rounded-2xl bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10',
+            'relative rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10 flex items-center',
             isFocused || businessValue
                 ? 'shadow-lg shadow-primary/20 dark:shadow-primary/10 ring-primary/20'
                 : 'shadow-md shadow-black/5'
         )}>
             <Label htmlFor="business" className="sr-only">Describe your project</Label>
-            <Textarea
-                {...rest}
-                ref={(e) => {
-                    formRef(e)
-                    // @ts-ignore
-                    textareaRef.current = e
-                }}
+            {!businessValue && (
+               <AnimatedPlaceholder 
+                placeholders={[
+                    "A luxury tech store...",
+                    "A brand new SaaS for designers...",
+                    "An e-commerce site for artists...",
+                    "A portfolio for a photographer..."
+                ]} 
+                className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+              />
+            )}
+            <Input
+                {...register('business')}
                 id="business"
-                placeholder="A luxury tech store..."
+                placeholder=""
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 autoComplete="off"
-                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 min-h-[52px] placeholder:text-muted-foreground overflow-y-hidden"
-                rows={1}
+                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 h-12 rounded-full placeholder:text-muted-foreground"
             />
             <Button 
                 type="submit" 
