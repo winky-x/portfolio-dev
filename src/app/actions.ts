@@ -2,6 +2,8 @@
 'use server'
 
 import { z } from 'zod'
+import { summarizeInquiry } from '@/ai/flows/summarize-inquiry-flow'
+import { appendToGoogleDoc } from '@/services/google-docs-service'
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -18,46 +20,6 @@ export type ContactFormState = {
     business?: string[]
   }
 }
-
-async function sendEmail({ name, email, business }: { name: string; email: string; business: string }) {
-  // This is where you would integrate your email sending service (e.g., Resend, SendGrid).
-  // The following is a simulation. You'll need an API key and the service's SDK.
-
-  const developerEmail = 'your.email@example.com' // Your email address
-  const subject = `New Portfolio Inquiry from ${name}`
-  const body = `
-    You've received a new message from your portfolio contact form:
-
-    Name: ${name}
-    Email: ${email}
-    Business/Project Description:
-    ${business}
-  `
-
-  console.log("--- SIMULATING EMAIL SEND ---")
-  console.log(`To: ${developerEmail}`)
-  console.log(`From: noreply@yourdomain.com`)
-  console.log(`Subject: ${subject}`)
-  console.log(`Body:\n${body}`)
-  console.log("--- END SIMULATION ---")
-
-  // Example with a real service like Resend (you would need to `npm install resend`):
-  /*
-  import { Resend } from 'resend';
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
-  await resend.emails.send({
-    from: 'onboarding@resend.dev', // A domain you have verified with Resend
-    to: developerEmail,
-    subject: subject,
-    text: body,
-  });
-  */
-
-  // For this simulation, we'll just resolve successfully.
-  return Promise.resolve()
-}
-
 
 export async function submitContactForm(
   prevState: ContactFormState,
@@ -78,7 +40,19 @@ export async function submitContactForm(
   }
 
   try {
-    await sendEmail(validatedFields.data)
+    // 1. Generate AI summary
+    const summary = await summarizeInquiry({
+      businessDescription: validatedFields.data.business,
+    })
+
+    // 2. Append to Google Doc (or Sheet)
+    await appendToGoogleDoc({
+      name: validatedFields.data.name,
+      email: validatedFields.data.email,
+      business: validatedFields.data.business,
+      summary: summary,
+    })
+    
     return {
       status: 'success',
       message: "Got it! I'll be in touch soon.",

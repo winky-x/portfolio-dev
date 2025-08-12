@@ -6,11 +6,11 @@ import { submitContactForm, type ContactFormState } from '@/app/actions'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Mail, ArrowUp } from 'lucide-react'
+import { Loader2, Mail, ArrowUp, CheckCircle, BrainCircuit } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -56,13 +56,17 @@ export function ContactSection() {
   
   useEffect(() => {
     if (state.status === 'success') {
-      setShowDetailsModal(false)
-      reset()
-      resetDetails()
-      toast({
-        title: 'Message Sent!',
-        description: "Thanks for reaching out. I'll be in touch soon.",
-      })
+      setTimeout(() => {
+        setShowDetailsModal(false)
+        reset()
+        resetDetails()
+        // Reset state after a delay to allow the dialog to close
+        setTimeout(() => setState({ status: 'idle', message: '' }), 500);
+        toast({
+          title: 'Message Sent!',
+          description: "Thanks for reaching out. I'll be in touch soon.",
+        })
+      }, 1500) // Keep success state for a bit to show checkmark
     } else if (state.status === 'error' && state.message && state.message !== 'Invalid form data.') {
        toast({
         variant: 'destructive',
@@ -91,6 +95,7 @@ export function ContactSection() {
     formData.append('email', data.email);
     
     startTransition(async () => {
+        setState({ status: 'loading', message: 'Analyzing inquiry...' });
         const result = await submitContactForm(state, formData);
         setState(result);
     });
@@ -99,17 +104,17 @@ export function ContactSection() {
   return (
     <section id="contact" className="w-full">
         <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
-            Describe your store
+            Have a project in mind?
         </h3>
       <form onSubmit={handleSubmit(handleInitialSubmit)}>
         <div className={cn(
-            'relative rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10 flex items-center',
+            'relative rounded-full bg-background/50 dark:bg-black/50 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10 flex items-center shadow-md',
             isFocused || businessValue
                 ? 'shadow-lg shadow-primary/20 dark:shadow-primary/10 ring-primary/20'
-                : 'shadow-md shadow-black/5'
+                : 'shadow-black/5'
         )}>
             <Label htmlFor="business" className="sr-only">Describe your store</Label>
-            {!businessValue && (
+            {(!businessValue && !isFocused) && (
                <AnimatedPlaceholder 
                 placeholders={[
                     "A luxury tech store...",
@@ -135,7 +140,7 @@ export function ContactSection() {
                 className={cn(
                     "absolute right-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full transition-colors",
                     businessValue 
-                    ? 'bg-black/80 hover:bg-black text-white' 
+                    ? 'bg-black/80 hover:bg-black text-white dark:bg-white dark:text-black dark:hover:bg-white/90' 
                     : 'bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 text-foreground'
                 )}
                 >
@@ -143,49 +148,82 @@ export function ContactSection() {
                 <span className="sr-only">Send</span>
             </Button>
         </div>
+         {errors.business && <p className="text-destructive text-sm mt-2 text-center">{errors.business.message}</p>}
       </form>
 
       <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Mail/> Almost there!</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+                <Mail/> Almost there!
+            </DialogTitle>
             <DialogDescription>
               Just need a couple more details to send your message.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmitDetails(handleFinalSubmit)} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Name</Label>
-                <Input 
-                  {...registerDetails('name')}
-                  id="name" 
-                  placeholder="Ada Lovelace" 
-                  onBlur={() => triggerDetails('name')}
-                  className="mt-1" 
-                />
-                {detailsErrors.name && <p className="text-destructive text-sm mt-1">{detailsErrors.name.message}</p>}
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input 
-                  {...registerDetails('email')}
-                  id="email" 
-                  type="email" 
-                  placeholder="ada@example.com"
-                  onBlur={() => triggerDetails('email')}
-                  className="mt-1"
-                />
-                  {detailsErrors.email && <p className="text-destructive text-sm mt-1">{detailsErrors.email.message}</p>}
-              </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="ghost">Cancel</Button>
-              </DialogClose>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? <Loader2 className="animate-spin" /> : "Send Message"}
-              </Button>
-            </DialogFooter>
-          </form>
+           <motion.div
+            key={state.status}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            {state.status === 'loading' || state.status === 'success' ? (
+                <div className="flex flex-col items-center justify-center space-y-4 my-8">
+                {state.status === 'loading' && (
+                    <>
+                        <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                        >
+                            <BrainCircuit className="h-12 w-12 text-primary"/>
+                        </motion.div>
+                        <p className="text-muted-foreground">Analyzing inquiry & generating summary...</p>
+                    </>
+                )}
+                {state.status === 'success' && (
+                     <>
+                        <CheckCircle className="h-12 w-12 text-green-500"/>
+                        <p className="text-muted-foreground">Inquiry saved! Thank you.</p>
+                    </>
+                )}
+                </div>
+            ) : (
+                <form onSubmit={handleSubmitDetails(handleFinalSubmit)} className="space-y-4">
+                    <div>
+                        <Label htmlFor="name">Name</Label>
+                        <Input 
+                        {...registerDetails('name')}
+                        id="name" 
+                        placeholder="Ada Lovelace" 
+                        onBlur={() => triggerDetails('name')}
+                        className="mt-1" 
+                        />
+                        {detailsErrors.name && <p className="text-destructive text-sm mt-1">{detailsErrors.name.message}</p>}
+                    </div>
+                    <div>
+                        <Label htmlFor="email">Email</Label>
+                        <Input 
+                        {...registerDetails('email')}
+                        id="email" 
+                        type="email" 
+                        placeholder="ada@example.com"
+                        onBlur={() => triggerDetails('email')}
+                        className="mt-1"
+                        />
+                        {detailsErrors.email && <p className="text-destructive text-sm mt-1">{detailsErrors.email.message}</p>}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button type="button" variant="ghost">Cancel</Button>
+                        </DialogClose>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? <Loader2 className="animate-spin" /> : "Send Message"}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            )}
+          </motion.div>
         </DialogContent>
       </Dialog>
     </section>
