@@ -3,7 +3,7 @@
 import * as THREE from 'three'
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { LiquidMaterial } from './materials/LiquidMaterial'
+import './materials/LiquidMaterial' // Import for side-effects (extend)
 import { useTheme } from 'next-themes'
 
 export function LiquidHeroBlob() {
@@ -43,7 +43,7 @@ export function LiquidHeroBlob() {
   return (
     <mesh ref={meshRef} scale={2.5}>
       <icosahedronGeometry args={[1, 128]} />
-      <LiquidMaterial ref={materialRef} uniforms={uniforms} />
+      <liquidMaterial ref={materialRef} uniforms={uniforms} />
     </mesh>
   )
 }
