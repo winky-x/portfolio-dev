@@ -10,7 +10,6 @@ import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { Loader2, Mail, ArrowUp } from 'lucide-react'
 import {
@@ -34,19 +33,62 @@ const finalDetailsSchema = z.object({
   email: z.string().email({ message: 'A valid email is required.' }),
 })
 
-function SubmitButton({ disabled }: { disabled: boolean }) {
+const placeholders = [
+    "Need a new website from scratch?",
+    "Looking to revamp your existing site?",
+    "Want to build a fast e-commerce store?",
+    "Have an idea for a web application?",
+    "Need a custom dashboard for your data?",
+    "Let's create a stunning portfolio site.",
+    "Want to improve your site's performance?",
+    "Building a community with a forum?",
+    "Thinking about a membership platform?",
+    "Need a blog that stands out?",
+    "Let's build an interactive learning tool.",
+    "Got a cool API you want to visualize?",
+    "Launching a new product or service?",
+    "Need a hand with a tricky front-end feature?",
+    "Let's bring your creative vision to life."
+];
+
+function AnimatedPlaceholder() {
+  const [index, setIndex] = useState(0);
+  const [text, setText] = useState(placeholders[0]);
+  const [isTyping, setIsTyping] = useState(true);
+
+  useEffect(() => {
+    const typingTimeout = setTimeout(() => {
+      if (isTyping) {
+        if (text.length < placeholders[index].length) {
+          setText(placeholders[index].slice(0, text.length + 1));
+        } else {
+          setTimeout(() => setIsTyping(false), 2000); // Wait before deleting
+        }
+      } else {
+        if (text.length > 0) {
+          setText(text.slice(0, text.length - 1));
+        } else {
+          setIndex((prevIndex) => (prevIndex + 1) % placeholders.length);
+          setIsTyping(true);
+        }
+      }
+    }, isTyping ? 50 : 30);
+
+    return () => clearTimeout(typingTimeout);
+  }, [text, isTyping, index]);
+  
+  return <>{text}<span className="animate-ping">|</span></>;
+}
+
+
+function SubmitButton() {
   const { pending } = useFormStatus()
   return (
     <Button 
       type="submit" 
-      disabled={pending || disabled} 
+      disabled={pending} 
       size="icon" 
-      className={cn(
-        "absolute right-1.5 bottom-1.5 h-8 w-8 rounded-full transition-colors",
-        disabled 
-          ? 'bg-transparent text-muted-foreground' 
-          : 'bg-black hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/80'
-      )}
+      className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/80 dark:bg-white/10 dark:hover:bg-white/20 text-white"
     >
       {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
       <span className="sr-only">Send</span>
@@ -57,16 +99,13 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
 export function ContactSection() {
   const { toast } = useToast()
   const formRef = useRef<HTMLFormElement>(null)
-  const [isSuccess, setIsSuccess] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [businessDescription, setBusinessDescription] = useState('')
-  const [isFocused, setIsFocused] = useState(false)
-
 
   const initialState: ContactFormState = { status: 'idle', message: '' }
   const [state, formAction] = useActionState(submitContactForm, initialState)
 
-  const { register, handleSubmit, formState: { errors, isValid }, trigger, reset, watch } = useForm<{ business: string }>({
+  const { register, handleSubmit, reset, watch } = useForm<{ business: string }>({
     resolver: zodResolver(businessSchema),
     mode: 'onChange',
   })
@@ -79,7 +118,6 @@ export function ContactSection() {
 
   useEffect(() => {
     if (state.status === 'success') {
-      setIsSuccess(true)
       setShowDetailsModal(false)
       reset()
       resetDetails()
@@ -87,9 +125,6 @@ export function ContactSection() {
         title: 'Message Sent!',
         description: "Thanks for reaching out. My AI has your message and I'll be in touch soon.",
       })
-      setTimeout(() => {
-        setIsSuccess(false)
-      }, 5000)
     } else if (state.status === 'error' && state.message) {
       toast({
         variant: 'destructive',
@@ -114,30 +149,25 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="w-full">
-        <div className={cn(
-            'relative rounded-3xl bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10',
-            isFocused || businessValue
-              ? 'shadow-2xl shadow-primary/20 ring-primary/50'
-              : 'shadow-md shadow-black/10 '
-        )}>
-            <form ref={formRef} onSubmit={handleSubmit(handleInitialSubmit)}>
-              <label htmlFor="business" className="sr-only">Describe your project</label>
-              <Textarea
+        <form 
+            ref={formRef} 
+            onSubmit={handleSubmit(handleInitialSubmit)} 
+            className="relative flex items-center w-full h-12 border-b border-white/20"
+        >
+            <label htmlFor="business" className="sr-only">Describe your project</label>
+            <Input
                 {...register('business')}
                 id="business"
-                placeholder="Have a project in mind? Describe it here and my AI assistant will get things started..."
-                rows={1}
-                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 text-foreground py-2 h-10 rounded-3xl"
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => {
-                  setIsFocused(false);
-                  trigger('business');
-                }}
-              />
-              <SubmitButton disabled={!isValid}/>
-            </form>
-          </div>
-          {errors.business && <p className="text-destructive text-sm mt-2 px-3">{errors.business.message}</p>}
+                placeholder={businessValue ? '' : undefined}
+                className="flex-1 h-full pl-0 bg-transparent border-none text-base focus-visible:ring-0 text-foreground placeholder:text-muted-foreground"
+            />
+             {!businessValue && (
+              <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none text-muted-foreground">
+                  <AnimatedPlaceholder />
+              </div>
+             )}
+            <SubmitButton />
+        </form>
 
         <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
           <DialogContent>
