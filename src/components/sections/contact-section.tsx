@@ -99,9 +99,8 @@ export function ContactSection() {
   }
 
   return (
-    <section id="contact" className="py-3 bg-transparent sticky top-14 z-40">
-      <div className="container max-w-screen-2xl">
-          <div className="p-1 rounded-lg bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 shadow-lg backdrop-blur-md">
+    <section id="contact" className="w-full">
+        <div className="p-1 rounded-lg bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 shadow-lg backdrop-blur-md">
             <form ref={formRef} onSubmit={handleSubmit(handleInitialSubmit)} className="relative">
               <label htmlFor="business" className="sr-only">Describe your project</label>
               <Textarea
@@ -161,7 +160,6 @@ export function ContactSection() {
             </form>
           </DialogContent>
         </Dialog>
-      </div>
     </section>
   )
 }
