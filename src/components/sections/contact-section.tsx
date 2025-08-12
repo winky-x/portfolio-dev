@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Send, CheckCircle, Mail } from 'lucide-react'
-import { Card, CardContent } from '../ui/card'
+import { Loader2, Send, Mail } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -37,9 +36,9 @@ const finalDetailsSchema = z.object({
 function SubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" disabled={pending || disabled} size="sm" className="absolute right-2.5 bottom-2.5">
-      {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-      Send
+    <Button type="submit" disabled={pending || disabled} size="sm" className="absolute right-1.5 bottom-1.5">
+      {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+      <span className="sr-only">Send</span>
     </Button>
   )
 }
@@ -100,25 +99,23 @@ export function ContactSection() {
   }
 
   return (
-    <section id="contact" className="border-b border-border/40 py-6 bg-background sticky top-14 z-40">
+    <section id="contact" className="py-3 bg-transparent sticky top-14 z-40">
       <div className="container max-w-screen-2xl">
-        <Card className="shadow-none border-none bg-secondary/50 dark:bg-secondary/20">
-          <CardContent className="p-4">
+          <div className="p-1 rounded-lg bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 shadow-lg backdrop-blur-md">
             <form ref={formRef} onSubmit={handleSubmit(handleInitialSubmit)} className="relative">
               <label htmlFor="business" className="sr-only">Describe your project</label>
               <Textarea
                 {...register('business')}
                 id="business"
                 placeholder="Have a project in mind? Describe it here and my AI assistant will get things started..."
-                rows={2}
-                className="pr-24 text-base resize-none"
+                rows={1}
+                className="bg-transparent border-none pr-12 text-base resize-none focus-visible:ring-0 text-foreground"
                 onBlur={() => trigger('business')}
               />
               <SubmitButton disabled={!isValid}/>
             </form>
-            {errors.business && <p className="text-destructive text-sm mt-2">{errors.business.message}</p>}
-          </CardContent>
-        </Card>
+            {errors.business && <p className="text-destructive text-sm mt-2 px-3">{errors.business.message}</p>}
+          </div>
 
         <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
           <DialogContent>
