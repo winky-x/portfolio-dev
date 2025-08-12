@@ -1,23 +1,22 @@
 
 'use server'
 
-import { prepareEmail, type PrepareEmailInput, type PrepareEmailOutput } from '@/ai/flows/prepare-email'
+import { sendEmail, type SendEmailInput } from '@/ai/flows/send-email'
 import { z } from 'zod'
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   email: z.string().email(),
-  message: z.string().min(10, 'Message must be at least 10 characters.'),
+  business: z.string().min(10, 'Please describe your business in at least 10 characters.'),
 })
 
 export type ContactFormState = {
-  status: 'idle' | 'success' | 'error'
+  status: 'idle' | 'success' | 'error' | 'loading'
   message: string
-  data?: PrepareEmailOutput | null
   errors?: {
     name?: string[]
     email?: string[]
-    message?: string[]
+    business?: string[]
   }
 }
 
@@ -28,7 +27,7 @@ export async function submitContactForm(
   const validatedFields = contactSchema.safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
-    message: formData.get('message'),
+    business: formData.get('business'),
   })
 
   if (!validatedFields.success) {
@@ -39,28 +38,28 @@ export async function submitContactForm(
     }
   }
 
-  const { name, email, message } = validatedFields.data
+  const { name, email, business } = validatedFields.data
   
-  const clientDetails = `Client Name: ${name}\nClient Email: ${email}\nMessage: ${message}`
-  const developerEmail = 'your.email@example.com' // This should be the portfolio owner's email
+  const developerEmail = 'your.email@example.com' 
 
-  const aiInput: PrepareEmailInput = {
-    clientDetails,
-    userEmail: developerEmail,
+  const aiInput: SendEmailInput = {
+    clientName: name,
+    clientEmail: email,
+    businessDescription: business,
+    developerEmail: developerEmail
   }
 
   try {
-    const result = await prepareEmail(aiInput)
+    await sendEmail(aiInput)
     return {
       status: 'success',
-      message: 'Draft prepared successfully.',
-      data: result,
+      message: "Got it! I'll be in touch soon.",
     }
   } catch (error) {
     console.error('AI Error:', error)
     return {
       status: 'error',
-      message: 'Failed to prepare email draft. Please try again.',
+      message: 'Something went wrong. Please try again.',
     }
   }
 }

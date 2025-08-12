@@ -17,8 +17,8 @@ export default function Home() {
         <ProjectsSection />
         <ExperienceSection />
         <IntegrationsSection />
-        <ContactSection />
       </main>
+      <ContactSection />
       <Footer />
     </div>
   )
