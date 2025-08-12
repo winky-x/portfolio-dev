@@ -61,7 +61,7 @@ export function ContactSection() {
       resetDetails()
       toast({
         title: 'Message Sent!',
-        description: "Thanks for reaching out. My AI has your message and I'll be in touch soon.",
+        description: "Thanks for reaching out. I'll be in touch soon.",
       })
     } else if (state.status === 'error' && state.message && state.message !== 'Invalid form data.') {
        toast({
@@ -99,7 +99,7 @@ export function ContactSection() {
   return (
     <section id="contact" className="w-full">
         <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
-            Describe your project
+            Describe your store
         </h3>
       <form onSubmit={handleSubmit(handleInitialSubmit)}>
         <div className={cn(
@@ -108,7 +108,7 @@ export function ContactSection() {
                 ? 'shadow-lg shadow-primary/20 dark:shadow-primary/10 ring-primary/20'
                 : 'shadow-md shadow-black/5'
         )}>
-            <Label htmlFor="business" className="sr-only">Describe your project</Label>
+            <Label htmlFor="business" className="sr-only">Describe your store</Label>
             {!businessValue && (
                <AnimatedPlaceholder 
                 placeholders={[
@@ -133,7 +133,7 @@ export function ContactSection() {
                 type="submit" 
                 size="icon" 
                 className={cn(
-                    "absolute right-2.5 bottom-2.5 h-8 w-8 rounded-full transition-colors",
+                    "absolute right-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full transition-colors",
                     businessValue 
                     ? 'bg-black/80 hover:bg-black text-white' 
                     : 'bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 text-foreground'
