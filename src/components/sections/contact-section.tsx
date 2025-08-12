@@ -64,10 +64,11 @@ export function ContactSection() {
   const initialState: ContactFormState = { status: 'idle', message: '' }
   const [state, formAction] = useActionState(submitContactForm, initialState)
 
-  const { register, handleSubmit, formState: { errors, isValid }, trigger, reset } = useForm<{ business: string }>({
+  const { register, handleSubmit, formState: { errors, isValid }, trigger, reset, watch } = useForm<{ business: string }>({
     resolver: zodResolver(businessSchema),
     mode: 'onChange',
   })
+  const businessValue = watch('business')
 
   const { register: registerDetails, handleSubmit: handleSubmitDetails, formState: { errors: detailsErrors }, trigger: triggerDetails, reset: resetDetails } = useForm<z.infer<typeof finalDetailsSchema>>({
     resolver: zodResolver(finalDetailsSchema),
@@ -111,8 +112,13 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="w-full">
-        <div className="p-1 rounded-3xl bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 shadow-lg backdrop-blur-md">
-            <form ref={formRef} onSubmit={handleSubmit(handleInitialSubmit)} className="relative">
+        <div className={cn(
+            'relative rounded-3xl bg-white/10 dark:bg-black/10 backdrop-blur-md transition-all duration-300',
+            businessValue && businessValue.length > 0
+              ? 'shadow-lg shadow-primary/20 ring-1 ring-primary/50'
+              : 'shadow-md shadow-black/10 ring-1 ring-black/10'
+        )}>
+            <form ref={formRef} onSubmit={handleSubmit(handleInitialSubmit)}>
               <label htmlFor="business" className="sr-only">Describe your project</label>
               <Textarea
                 {...register('business')}
@@ -124,8 +130,8 @@ export function ContactSection() {
               />
               <SubmitButton disabled={!isValid}/>
             </form>
-            {errors.business && <p className="text-destructive text-sm mt-2 px-3">{errors.business.message}</p>}
           </div>
+          {errors.business && <p className="text-destructive text-sm mt-2 px-3">{errors.business.message}</p>}
 
         <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
           <DialogContent>
