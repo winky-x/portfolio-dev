@@ -1,13 +1,17 @@
 'use client'
 
-import React, { Suspense } from 'react'
+import React, { Suspense, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { LiquidHeroBlob } from '@/components/3d/LiquidHeroBlob'
 import { ContactSection } from './contact-section'
+import { LiquidCursor } from '@/components/effects/LiquidCursor'
 
 export function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null)
   return (
-    <section className="relative w-full h-[100vh] overflow-hidden">
+    <section ref={sectionRef} className="relative w-full h-[100vh] overflow-hidden">
+      {/* Liquid cursor overlay */}
+      <LiquidCursor containerRef={sectionRef} intensity={0.4} trail={6} />
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
         <div className="pointer-events-none">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline tracking-tighter leading-tight">
