@@ -25,18 +25,6 @@ export async function summarizeInquiry(input: SummarizeInquiryInput): Promise<Su
   return summarizeInquiryFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'summarizeInquiryPrompt',
-  input: { schema: SummarizeInquiryInputSchema },
-  output: { schema: SummarizeInquiryOutputSchema },
-  prompt: `You are a helpful assistant for a freelance web developer. Your task is to summarize a new client inquiry into a single, concise sentence. Focus on the main goal or service the client is looking for.
-
-Client's Description:
-{{{businessDescription}}}
-
-Generate a one-sentence summary:`,
-});
-
 const summarizeInquiryFlow = ai.defineFlow(
   {
     name: 'summarizeInquiryFlow',
@@ -44,7 +32,14 @@ const summarizeInquiryFlow = ai.defineFlow(
     outputSchema: SummarizeInquiryOutputSchema,
   },
   async (input) => {
-    const response = await prompt.generate(input);
-    return response.output!;
+    const response = await ai.generate(
+      `You are a helpful assistant for a freelance web developer. Your task is to summarize a new client inquiry into a single, concise sentence. Focus on the main goal or service the client is looking for.
+
+Client's Description:
+${input.businessDescription}
+
+Generate a one-sentence summary:`
+    );
+    return response.text;
   }
 );

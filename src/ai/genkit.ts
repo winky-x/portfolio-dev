@@ -1,9 +1,8 @@
 
-import { genkit, AIMiddleware } from 'genkit';
+import { genkit, Middleware } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
-import { nextjs } from '@genkit-ai/next';
 
-const logger: AIMiddleware = async (action, next) => {
+const logger: Middleware = async (action: any, next: any) => {
   console.log('Action:', action.name, 'Input:', action.input);
   const result = await next(action);
   console.log('Action:', action.name, 'Output:', result.output);
@@ -15,10 +14,5 @@ export const ai = genkit({
     googleAI({
       apiKey: process.env.GEMINI_API_KEY,
     }),
-    nextjs({
-      // The Next.js plugin is required for Genkit to work with Next.js.
-    }),
   ],
-  enableTracingAndMetrics: true,
-  middlewares: [logger],
 });
