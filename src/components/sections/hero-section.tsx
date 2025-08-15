@@ -11,12 +11,14 @@ export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null)
   return (
     <section ref={sectionRef} className="relative w-full h-[100vh] overflow-hidden">
-      {/* Background 3D - temporarily disabled */}
-      {/* <Canvas className="absolute inset-0 z-0 pointer-events-none" gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}>
+      {/* Background 3D */}
+      <Canvas className="absolute inset-0 z-0 pointer-events-none" gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}>
         <Suspense fallback={null}>
+          <ambientLight intensity={0.4} />
+          <directionalLight position={[10, 10, 5]} intensity={0.6} />
           <LiquidHeroBlob />
         </Suspense>
-      </Canvas> */}
+      </Canvas>
       
       {/* Liquid cursor overlay - temporarily disabled */}
       {/* <LiquidCursor containerRef={sectionRef} intensity={0.35} trail={6} /> */}
