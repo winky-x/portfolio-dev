@@ -12,7 +12,16 @@ export function HeroSection() {
   return (
     <section ref={sectionRef} className="relative w-full h-[100vh] overflow-hidden">
       {/* Liquid cursor overlay */}
-      <LiquidCursor containerRef={sectionRef} intensity={0.4} trail={6} />
+      <LiquidCursor containerRef={sectionRef} intensity={0.35} trail={6} />
+
+      {/* Background 3D */}
+      <Canvas className="absolute inset-0 z-0 pointer-events-none" gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}>
+        <Suspense fallback={null}>
+          <LiquidHeroBlob />
+        </Suspense>
+      </Canvas>
+
+      {/* Foreground content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
         <div className="pointer-events-none">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline tracking-tighter leading-tight">
@@ -31,12 +40,6 @@ export function HeroSection() {
       <div className="absolute left-0 right-0 bottom-4 z-10 px-6">
         <LogoMarquee className="w-full" />
       </div>
-
-      <Canvas>
-        <Suspense fallback={null}>
-          <LiquidHeroBlob />
-        </Suspense>
-      </Canvas>
     </section>
   )
 }
