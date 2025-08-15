@@ -60,7 +60,7 @@ const projects = [
 
 export function ProjectsSection() {
   return (
-    <section id="projects" className="py-20 lg:py-32 bg-secondary/50 dark:bg-secondary/20">
+    <section id="projects" className="py-20 lg:py-32 bg-transparent">
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tighter">
@@ -129,7 +129,7 @@ export function ProjectsSection() {
                         </Button>
                     </div>
                   </div>
-                  <div className="relative h-[450px] bg-secondary hidden md:flex items-center justify-center p-8 overflow-hidden">
+                  <div className="relative h[450px] bg-background hidden md:flex items-center justify-center p-8 overflow-hidden">
                     <Image src={project.desktopImage} alt={`${project.title} Desktop View`} width={1200} height={800} className="w-full rounded-lg shadow-2xl" data-ai-hint="website screenshot" />
                     <Image src={project.mobileImage} alt={`${project.title} Mobile View`} width={200} height={400} className="absolute right-4 bottom-4 w-1/4 rounded-md shadow-2xl border-4 border-background" data-ai-hint="mobile app screenshot" />
                   </div>

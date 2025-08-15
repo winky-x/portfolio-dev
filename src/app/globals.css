@@ -101,6 +101,20 @@
   .liquid-glass-card:hover {
     border-color: rgba(255,255,255,0.3);
   }
+
+  /* Special highlight utility */
+  .special-highlight { background-color: #FDFBD4; }
+  .dark .special-highlight { background-color: #FDFBD4; }
+
+  /* Logo marquee */
+  .marquee { overflow: hidden; position: relative; }
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    width: max-content;
+    animation: marqueeLeft 30s linear infinite;
+    will-change: transform;
+  }
 }
 
 @keyframes heroGhost {
@@ -108,4 +122,9 @@
   10% { opacity: 1; }
   90% { opacity: 1; }
   100% { transform: translateX(120%); opacity: 0; }
+}
+
+@keyframes marqueeLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
