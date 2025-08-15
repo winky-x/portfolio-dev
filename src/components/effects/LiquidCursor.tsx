@@ -11,13 +11,14 @@ interface LiquidCursorProps {
   trail?: number // number of points in the trail
 }
 
-export function LiquidCursor({ containerRef, intensity = 0.35, trail = 5 }: LiquidCursorProps) {
+export function LiquidCursor({ containerRef, intensity = 0.4, trail = 6 }: LiquidCursorProps) {
   return (
     <div className="pointer-events-none absolute inset-0 z-20">
       <Canvas
         orthographic
         camera={{ position: [0, 0, 1], zoom: 1 }}
         gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
+        className="pointer-events-none"
       >
         <FullscreenQuad containerRef={containerRef} intensity={intensity} trail={trail} />
       </Canvas>
@@ -30,7 +31,6 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
   const materialRef = useRef<THREE.ShaderMaterial>(null!)
   const { resolvedTheme } = useTheme()
 
-  // Track last N mouse positions
   const pointsRef = useRef<Array<[number, number]>>([])
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       uIntensity: { value: intensity },
       uColor: { value: new THREE.Color(resolvedTheme === 'dark' ? 0xffffff : 0x000000) },
       uAccent: { value: new THREE.Color('#FDFBD4') },
-      uTrailCount: { value: trail || 5 },
+      uTrailCount: { value: trail || 6 },
       uPoints: { value: new Array(10).fill([0, 0]).map(() => new THREE.Vector2(0, 0)) },
     }
     return u
@@ -75,7 +75,6 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
     if (!materialRef.current) return
     materialRef.current.uniforms.uTime.value = state.clock.getElapsedTime()
 
-    // Write latest points into uniforms
     const pts = pointsRef.current
     const uniArray: THREE.Vector2[] = materialRef.current.uniforms.uPoints.value
     for (let i = 0; i < uniArray.length; i++) {
@@ -83,7 +82,6 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       if (p) {
         uniArray[i].set(p[0], p[1])
       } else {
-        // decay to offscreen to avoid constant draw if no movement
         uniArray[i].set(-10, -10)
       }
     }
@@ -108,7 +106,6 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
     uniform int uTrailCount;
     uniform vec2 uPoints[10];
 
-    // Smooth circular field for each point
     float field(vec2 uv, vec2 p, float r) {
       float d = distance(uv, p);
       float f = exp(- (d*d) / (2.0 * r*r));
@@ -116,22 +113,18 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
     }
 
     void main() {
-      // Base transparency
       float alpha = 0.0;
-
-      // Sum fields from trail points with diminishing influence
       float radius;
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
-        radius = mix(0.18, 0.06, float(i) / float(max(uTrailCount-1, 1)));
+        radius = mix(0.2, 0.08, float(i) / float(max(uTrailCount-1, 1)));
         alpha += field(vUv, uPoints[i], radius);
       }
 
-      // Normalize and scale
-      alpha = clamp(alpha * uIntensity, 0.0, 0.6);
+      alpha = clamp(alpha * uIntensity, 0.0, 0.75);
 
-      // Subtle color blend towards accent for a liquid glow look
-      vec3 col = mix(uColor, uAccent, 0.25);
+      // liquid-glass blend: stronger accent with theme color
+      vec3 col = mix(uColor, uAccent, 0.45);
 
       gl_FragColor = vec4(col, alpha);
     }

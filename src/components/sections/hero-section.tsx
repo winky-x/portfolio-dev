@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { LiquidHeroBlob } from '@/components/3d/LiquidHeroBlob'
 import { ContactSection } from './contact-section'
 import { LiquidCursor } from '@/components/effects/LiquidCursor'
+import { LogoMarquee } from '@/components/LogoMarquee'
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -25,6 +26,12 @@ export function HeroSection() {
             <ContactSection />
         </div>
       </div>
+
+      {/* Bottom logo marquee */}
+      <div className="absolute left-0 right-0 bottom-4 z-10 px-6">
+        <LogoMarquee className="w-full" />
+      </div>
+
       <Canvas>
         <Suspense fallback={null}>
           <LiquidHeroBlob />

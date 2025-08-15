@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { AnimatedCounter } from '@/components/animated-counter'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { LogoMarquee } from '@/components/LogoMarquee'
 
 export function IntroSection() {
   return (
@@ -64,11 +63,7 @@ export function IntroSection() {
           </Card>
         </div>
 
-        <div className="mt-16">
-          {/* Logo marquee */}
-          {/* Uses right-to-left infinite loop */}
-          <LogoMarquee />
-        </div>
+
       </div>
     </section>
   )
