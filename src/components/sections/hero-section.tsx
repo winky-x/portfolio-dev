@@ -18,7 +18,7 @@ export function HeroSection() {
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline tracking-tighter leading-tight">
             Creative Developer & Digital Artisan
             </h1>
-            <p className="mt-4 max-w-3xl mx-auto text-center text-lg md:text-xl hero-subtitle-gradient">
+            <p className="mt-4 max-w-3xl mx-auto text-center text-lg md:text-xl text-foreground/80">
             Crafting beautiful, interactive, and performant web experiences to bring your ideas to life.
             </p>
         </div>
