@@ -3,7 +3,7 @@ import { Github, Music, Twitter } from "lucide-react"
 
 export function IntegrationsSection() {
     return (
-        <section id="integrations" className="py-20 lg:py-32 bg-secondary/50 dark:bg-secondary/20">
+        <section id="integrations" className="py-20 lg:py-32 bg-transparent">
             <div className="container">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tighter">
