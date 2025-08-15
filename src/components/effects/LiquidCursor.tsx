@@ -49,12 +49,17 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       pts.unshift([x, y])
       if (pts.length > (trail || 6)) pts.pop()
 
-      // detect interactive hover (buttons, links, inputs) to sharpen effect
+      // detect interactive hover (buttons, links, inputs, cards) to enhance liquid effect
       const elUnder = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null
       if (elUnder) {
         const tag = elUnder.tagName.toLowerCase()
-        const interactive = ['a', 'button', 'input', 'textarea', 'select', 'label'].includes(tag) || elUnder.closest('a,button,[role="button"],input,textarea,select,label')
-        setHoverBoost(interactive ? 1 : 0)
+        const isInteractive = ['a', 'button', 'input', 'textarea', 'select', 'label'].includes(tag) || 
+                             elUnder.closest('a,button,[role="button"],input,textarea,select,label') ||
+                             elUnder.closest('.liquid-glass-card, .group, [data-interactive]') ||
+                             elUnder.classList.contains('cursor-pointer') ||
+                             getComputedStyle(elUnder).cursor === 'pointer'
+        
+        setHoverBoost(isInteractive ? 1 : 0)
       } else {
         setHoverBoost(0)
       }
@@ -123,28 +128,84 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
     uniform int uTrailCount;
     uniform vec2 uPoints[10];
 
-    float field(vec2 uv, vec2 p, float r) {
+    // Noise function for organic liquid movement
+    float noise(vec2 p) {
+      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+    }
+
+    // Smooth noise
+    float smoothNoise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+      
+      float a = noise(i);
+      float b = noise(i + vec2(1.0, 0.0));
+      float c = noise(i + vec2(0.0, 1.0));
+      float d = noise(i + vec2(1.0, 1.0));
+      
+      return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+    }
+
+    // Liquid distortion field
+    vec2 liquidDistortion(vec2 uv, vec2 p, float r, float strength) {
       float d = distance(uv, p);
-      return exp(- (d*d) / (2.0 * r*r));
+      float influence = exp(-(d * d) / (2.0 * r * r));
+      
+      // Create swirling distortion
+      float angle = atan(uv.y - p.y, uv.x - p.x);
+      float swirl = sin(angle * 3.0 + uTime * 2.0) * 0.1;
+      
+      vec2 distortion = vec2(
+        sin(angle + uTime) * swirl * influence * strength,
+        cos(angle + uTime) * swirl * influence * strength
+      );
+      
+      return distortion;
     }
 
     void main() {
-      float alpha = 0.0;
-      float radius;
+      vec2 uv = vUv;
+      vec2 distortedUV = uv;
+      
+      // Apply liquid distortion from cursor trail
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
-        float sharp = mix(1.0, 0.7, uHoverBoost);
-        radius = sharp * mix(0.20, 0.08, float(i) / float(max(uTrailCount-1, 1)));
-        alpha += field(vUv, uPoints[i], radius);
+        float strength = mix(0.8, 1.5, uHoverBoost); // Stronger on hover
+        float radius = mix(0.15, 0.08, float(i) / float(max(uTrailCount-1, 1)));
+        vec2 distortion = liquidDistortion(uv, uPoints[i], radius, strength);
+        distortedUV += distortion;
       }
-
-      // Only draw near points; no base fill
-      alpha = clamp(alpha * uIntensity, 0.0, 0.45 + 0.15 * uHoverBoost);
-
-      // Apple-like liquid glass color: mostly white with warm tint
-      vec3 col = mix(uBase, uAccent, 0.3);
-
-      gl_FragColor = vec4(col, alpha);
+      
+      // Add organic noise for liquid texture
+      float liquidNoise = smoothNoise(distortedUV * 20.0 + uTime * 0.5) * 0.1;
+      distortedUV += liquidNoise;
+      
+      // Calculate liquid effect intensity
+      float liquidEffect = 0.0;
+      for (int i = 0; i < 10; i++) {
+        if (i >= uTrailCount) break;
+        float d = distance(uv, uPoints[i]);
+        float r = mix(0.25, 0.12, float(i) / float(max(uTrailCount-1, 1)));
+        liquidEffect += exp(-(d * d) / (2.0 * r * r));
+      }
+      
+      // Enhanced hover effect
+      float hoverIntensity = mix(1.0, 2.5, uHoverBoost);
+      liquidEffect *= hoverIntensity;
+      
+      // Create liquid glass appearance
+      float alpha = clamp(liquidEffect * uIntensity, 0.0, 0.8);
+      
+      // Apple-style liquid glass colors with depth
+      vec3 baseColor = mix(uBase, uAccent, 0.2);
+      vec3 liquidColor = mix(baseColor, vec3(1.0, 1.0, 1.0), 0.3);
+      
+      // Add subtle color variation based on distortion
+      float distortionAmount = length(distortedUV - uv);
+      liquidColor = mix(liquidColor, uAccent, distortionAmount * 0.5);
+      
+      gl_FragColor = vec4(liquidColor, alpha);
     }
   `
 
