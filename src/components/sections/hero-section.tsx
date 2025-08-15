@@ -18,8 +18,8 @@ export function HeroSection() {
         </Suspense>
       </Canvas>
       
-      {/* Liquid cursor overlay */}
-      <LiquidCursor containerRef={sectionRef} intensity={0.35} trail={6} />
+      {/* Liquid cursor overlay - temporarily disabled */}
+      {/* <LiquidCursor containerRef={sectionRef} intensity={0.35} trail={6} /> */}
 
       {/* Foreground content */}
       <div className="relative z-30 flex flex-col items-center justify-center h-full text-center px-4">
