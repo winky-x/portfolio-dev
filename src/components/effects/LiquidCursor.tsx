@@ -125,8 +125,7 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
 
     float field(vec2 uv, vec2 p, float r) {
       float d = distance(uv, p);
-      float f = exp(- (d*d) / (2.0 * r*r));
-      return f;
+      return exp(- (d*d) / (2.0 * r*r));
     }
 
     void main() {
@@ -134,17 +133,16 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       float radius;
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
-        // On hover, sharpen by reducing radius
         float sharp = mix(1.0, 0.7, uHoverBoost);
         radius = sharp * mix(0.20, 0.08, float(i) / float(max(uTrailCount-1, 1)));
         alpha += field(vUv, uPoints[i], radius);
       }
 
-      // Scale, clamp and slightly boost in dark to compensate contrast
-      alpha = clamp(alpha * uIntensity + uDarkBoost, 0.0, 0.6 + 0.2 * uHoverBoost);
+      // Only draw near points; no base fill
+      alpha = clamp(alpha * uIntensity, 0.0, 0.45 + 0.15 * uHoverBoost);
 
       // Apple-like liquid glass color: mostly white with warm tint
-      vec3 col = mix(uBase, uAccent, 0.25);
+      vec3 col = mix(uBase, uAccent, 0.3);
 
       gl_FragColor = vec4(col, alpha);
     }
