@@ -13,7 +13,7 @@ interface LiquidCursorProps {
 
 export function LiquidCursor({ containerRef, intensity = 0.35, trail = 6 }: LiquidCursorProps) {
   return (
-    <div className="pointer-events-none absolute inset-0 z-20">
+    <div className="pointer-events-none absolute inset-0 z-10">
       <Canvas
         orthographic
         camera={{ position: [0, 0, 1], zoom: 1 }}

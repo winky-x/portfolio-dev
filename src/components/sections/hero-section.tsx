@@ -10,9 +10,16 @@ import { LogoMarquee } from '@/components/LogoMarquee'
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null)
   return (
-    <section ref={sectionRef} className="relative w-full h-[100vh] overflow-hidden bg-white dark:bg-black">
-      {/* Simple background for debugging */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-black" />
+    <section ref={sectionRef} className="relative w-full h-[100vh] overflow-hidden">
+      {/* Background 3D */}
+      <Canvas className="absolute inset-0 z-0 pointer-events-none" gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}>
+        <Suspense fallback={null}>
+          <LiquidHeroBlob />
+        </Suspense>
+      </Canvas>
+      
+      {/* Liquid cursor overlay */}
+      <LiquidCursor containerRef={sectionRef} intensity={0.35} trail={6} />
 
       {/* Foreground content */}
       <div className="relative z-30 flex flex-col items-center justify-center h-full text-center px-4">
@@ -23,8 +30,6 @@ export function HeroSection() {
             <p className="mt-4 max-w-3xl mx-auto text-center text-lg md:text-xl text-black/80 dark:text-white/80">
             Crafting beautiful, interactive, and performant web experiences to bring your ideas to life.
             </p>
-            {/* Debug text */}
-            <p className="mt-4 text-sm text-red-500">DEBUG: Hero text is rendering</p>
         </div>
         <div className="w-full max-w-2xl mt-8 pointer-events-auto">
             <ContactSection />
