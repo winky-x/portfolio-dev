@@ -6,25 +6,25 @@ import { cn } from '@/lib/utils'
 
 const experience = [
   {
-    role: 'Lead Frontend Developer',
-    company: 'Stellar Solutions Inc.',
-    period: '2020 - Present',
+    role: 'Full-Stack Developer',
+    company: 'TechCorp Solutions',
+    period: '2022 - Present',
     description:
-      'Led the development of a design system and high-traffic web applications using React and TypeScript. Mentored junior developers and improved code quality by 30%.',
+      'Develop and maintain web applications using React, Next.js, and Node.js. Implemented CI/CD pipelines and improved application performance by 40%.',
   },
   {
-    role: 'Senior Software Engineer',
-    company: 'Innovatech',
-    period: '2017 - 2020',
+    role: 'Frontend Developer',
+    company: 'Digital Innovations',
+    period: '2020 - 2022',
     description:
-      'Engineered and maintained large-scale e-commerce platforms. Specialized in performance optimization, reducing page load times by 50% for key user flows.',
+      'Built responsive user interfaces and implemented modern web technologies. Collaborated with design teams to create seamless user experiences.',
   },
   {
-    role: 'Web Developer',
-    company: 'Digital Creations',
-    period: '2014 - 2017',
+    role: 'Junior Developer',
+    company: 'WebStart Agency',
+    period: '2019 - 2020',
     description:
-      'Developed responsive websites and web applications for various clients across different industries. Gained expertise in JavaScript, HTML5, and CSS3.',
+      'Started my journey in web development, working on client projects and learning modern frameworks like React and Vue.js.',
   },
 ];
 

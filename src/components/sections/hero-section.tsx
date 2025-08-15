@@ -21,10 +21,10 @@ export function HeroSection() {
       <div className="relative z-30 flex flex-col items-center justify-center h-full text-center px-4">
         <div className="pointer-events-none">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline tracking-tighter leading-tight text-black dark:text-white">
-            Creative Developer & Digital Artisan
+            Full-Stack Developer & UI/UX Designer
             </h1>
             <p className="mt-4 max-w-3xl mx-auto text-center text-lg md:text-xl text-black/80 dark:text-white/80">
-            Crafting beautiful, interactive, and performant web experiences to bring your ideas to life.
+            Building modern web applications with cutting-edge technologies. Specializing in React, Next.js, and cloud solutions.
             </p>
         </div>
         <div className="w-full max-w-2xl mt-8 pointer-events-auto">

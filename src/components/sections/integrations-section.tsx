@@ -21,31 +21,51 @@ export function IntegrationsSection() {
                            <Github className="w-6 h-6 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-sm text-muted-foreground mb-4">My contribution graph</div>
-                            <div className="flex gap-1">
-                                {Array.from({ length: 15 }).map((_, i) => (
-                                    <div key={i} className="w-full h-8 bg-muted rounded-sm flex items-center justify-center">
-                                         <div style={{width: '90%', height: `${Math.random() * 80 + 10}%`}} className="bg-primary/20 rounded-sm"></div>
-                                    </div>
-                                ))}
+                            <div className="text-sm text-muted-foreground mb-4">Recent contributions</div>
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span className="text-sm">Added portfolio animations</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <span className="text-sm">Updated dependencies</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                    <span className="text-sm">Fixed responsive issues</span>
+                                </div>
                             </div>
                             <div className="text-xs text-muted-foreground mt-4">
-                                Latest commit: `feat: implement dark mode` 2 hours ago
+                                Latest: Portfolio redesign 3 days ago
                             </div>
                         </CardContent>
                     </Card>
 
                      <Card>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                           <CardTitle className="text-lg font-medium">Listening On Spotify</CardTitle>
+                           <CardTitle className="text-lg font-medium">Currently Learning</CardTitle>
                            <Music className="w-6 h-6 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 bg-muted rounded-md flex-shrink-0"></div>
-                                <div className="space-y-1">
-                                    <p className="font-semibold leading-none">Not Playing</p>
-                                    <p className="text-sm text-muted-foreground">Spotify is not active</p>
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                        <span className="text-white text-xs font-bold">AI</span>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-sm">AI/ML Integration</p>
+                                        <p className="text-xs text-muted-foreground">Exploring GenAI tools</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                        <span className="text-white text-xs font-bold">3D</span>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-sm">Three.js & WebGL</p>
+                                        <p className="text-xs text-muted-foreground">Advanced 3D graphics</p>
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
@@ -53,13 +73,21 @@ export function IntegrationsSection() {
 
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                           <CardTitle className="text-lg font-medium">Latest on X</CardTitle>
+                           <CardTitle className="text-lg font-medium">Tech Stack</CardTitle>
                            <Twitter className="w-6 h-6 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                             <div className="space-y-2">
-                                <p className="text-sm">Excited to explore the new features in Next.js 15! The React Compiler integration looks promising. #webdev #react</p>
-                                <p className="text-xs text-muted-foreground">1 day ago</p>
+                             <div className="space-y-3">
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">React</span>
+                                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Next.js</span>
+                                    <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">TypeScript</span>
+                                    <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">Tailwind</span>
+                                    <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Node.js</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Always exploring new technologies and frameworks
+                                </p>
                              </div>
                         </CardContent>
                     </Card>

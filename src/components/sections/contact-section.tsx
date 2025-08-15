@@ -104,7 +104,7 @@ export function ContactSection() {
   return (
     <section id="contact" className="w-full">
         <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
-            Have a project in mind?
+            Ready to start your next project?
         </h3>
       <form onSubmit={handleSubmit(handleInitialSubmit)}>
         <div className={cn(
@@ -117,10 +117,10 @@ export function ContactSection() {
             {(!businessValue && !isFocused) && (
                <AnimatedPlaceholder 
                 placeholders={[
-                    "A luxury tech store...",
-                    "A brand new SaaS for designers...",
-                    "An e-commerce site for artists...",
-                    "A portfolio for a photographer..."
+                    "A modern e-commerce platform...",
+                    "A SaaS dashboard for businesses...",
+                    "A portfolio website...",
+                    "A web application..."
                 ]} 
                 className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none whitespace-nowrap"
               />

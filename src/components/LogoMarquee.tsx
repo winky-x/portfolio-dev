@@ -4,12 +4,14 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 const LOGOS: { src: string; alt: string }[] = [
-  { src: "https://placehold.co/120x40?text=Next.js", alt: "Next.js" },
-  { src: "https://placehold.co/120x40?text=React", alt: "React" },
-  { src: "https://placehold.co/120x40?text=TypeScript", alt: "TypeScript" },
-  { src: "https://placehold.co/120x40?text=Tailwind", alt: "Tailwind" },
-  { src: "https://placehold.co/120x40?text=Three.js", alt: "Three.js" },
-  { src: "https://placehold.co/120x40?text=Node.js", alt: "Node.js" },
+  { src: "/logos/nextjs.svg", alt: "Next.js" },
+  { src: "/logos/react.svg", alt: "React" },
+  { src: "/logos/typescript.svg", alt: "TypeScript" },
+  { src: "/logos/tailwind.svg", alt: "Tailwind CSS" },
+  { src: "/logos/nodejs.svg", alt: "Node.js" },
+  { src: "/logos/aws.svg", alt: "AWS" },
+  { src: "/logos/docker.svg", alt: "Docker" },
+  { src: "/logos/git.svg", alt: "Git" },
 ]
 
 export function LogoMarquee({ className = "" }: { className?: string }) {
