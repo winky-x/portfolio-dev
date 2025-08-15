@@ -1,17 +1,16 @@
 "use client"
 
-import Image from "next/image"
 import { cn } from "@/lib/utils"
 
-const LOGOS: { src: string; alt: string }[] = [
-  { src: "/logos/nextjs.svg", alt: "Next.js" },
-  { src: "/logos/react.svg", alt: "React" },
-  { src: "/logos/typescript.svg", alt: "TypeScript" },
-  { src: "/logos/tailwind.svg", alt: "Tailwind CSS" },
-  { src: "/logos/nodejs.svg", alt: "Node.js" },
-  { src: "/logos/aws.svg", alt: "AWS" },
-  { src: "/logos/docker.svg", alt: "Docker" },
-  { src: "/logos/git.svg", alt: "Git" },
+const LOGOS: { name: string; color: string }[] = [
+  { name: "Next.js", color: "text-black dark:text-white" },
+  { name: "React", color: "text-blue-500" },
+  { name: "TypeScript", color: "text-blue-600" },
+  { name: "Tailwind CSS", color: "text-cyan-500" },
+  { name: "Node.js", color: "text-green-600" },
+  { name: "AWS", color: "text-orange-500" },
+  { name: "Docker", color: "text-blue-500" },
+  { name: "Git", color: "text-orange-600" },
 ]
 
 export function LogoMarquee({ className = "" }: { className?: string }) {
@@ -23,7 +22,9 @@ export function LogoMarquee({ className = "" }: { className?: string }) {
       <div className="marquee-track group-hover:[animation-duration:calc(var(--marquee-duration)*1.8)]">
         {items.map((logo, i) => (
           <div key={i} className="shrink-0 opacity-70 hover:opacity-100 transition-opacity duration-300">
-            <Image src={logo.src} alt={logo.alt} width={120} height={40} className="object-contain" />
+            <span className={cn("text-lg font-semibold tracking-wide", logo.color)}>
+              {logo.name}
+            </span>
           </div>
         ))}
       </div>
