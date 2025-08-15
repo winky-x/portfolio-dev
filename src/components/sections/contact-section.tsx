@@ -183,7 +183,7 @@ export function ContactSection() {
                 )}
                 {state.status === 'success' && (
                      <>
-                        <CheckCircle className="h-12 w-12 text-green-500"/>
+                        <CheckCircle className="h-12 w-12 text-foreground/60"/>
                         <p className="text-muted-foreground">Inquiry saved! Thank you.</p>
                     </>
                 )}
