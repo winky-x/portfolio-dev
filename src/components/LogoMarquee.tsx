@@ -2,15 +2,15 @@
 
 import { cn } from "@/lib/utils"
 
-const LOGOS: { name: string; color: string }[] = [
-  { name: "Next.js", color: "text-black dark:text-white" },
-  { name: "React", color: "text-blue-500" },
-  { name: "TypeScript", color: "text-blue-600" },
-  { name: "Tailwind CSS", color: "text-cyan-500" },
-  { name: "Node.js", color: "text-green-600" },
-  { name: "AWS", color: "text-orange-500" },
-  { name: "Docker", color: "text-blue-500" },
-  { name: "Git", color: "text-orange-600" },
+const LOGOS: { name: string; fontClass: string; gradient: string }[] = [
+  { name: "Next.js", fontClass: "font-nextjs", gradient: "bg-gradient-to-r from-black via-gray-800 to-black dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent" },
+  { name: "React", fontClass: "font-react", gradient: "bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-600 bg-clip-text text-transparent" },
+  { name: "TypeScript", fontClass: "font-typescript", gradient: "bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 bg-clip-text text-transparent" },
+  { name: "Tailwind CSS", fontClass: "font-tailwind", gradient: "bg-gradient-to-r from-cyan-500 via-blue-400 to-cyan-600 bg-clip-text text-transparent" },
+  { name: "Node.js", fontClass: "font-nodejs", gradient: "bg-gradient-to-r from-green-600 via-green-500 to-green-700 bg-clip-text text-transparent" },
+  { name: "AWS", fontClass: "font-aws", gradient: "bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-600 bg-clip-text text-transparent" },
+  { name: "Docker", fontClass: "font-docker", gradient: "bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 bg-clip-text text-transparent" },
+  { name: "Git", fontClass: "font-git", gradient: "bg-gradient-to-r from-orange-600 via-red-500 to-orange-700 bg-clip-text text-transparent" },
 ]
 
 export function LogoMarquee({ className = "" }: { className?: string }) {
@@ -22,7 +22,7 @@ export function LogoMarquee({ className = "" }: { className?: string }) {
       <div className="marquee-track group-hover:[animation-duration:calc(var(--marquee-duration)*1.8)]">
         {items.map((logo, i) => (
           <div key={i} className="shrink-0 opacity-70 hover:opacity-100 transition-opacity duration-300">
-            <span className={cn("text-lg font-semibold tracking-wide", logo.color)}>
+            <span className={cn("text-xl font-bold tracking-wide", logo.fontClass, logo.gradient)}>
               {logo.name}
             </span>
           </div>

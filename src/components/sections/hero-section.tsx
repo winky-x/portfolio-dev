@@ -12,7 +12,7 @@ export function HeroSection() {
   return (
     <section ref={sectionRef} className="relative w-full h-[100vh] overflow-hidden">
       {/* Simple gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900" />
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-black dark:to-black" />
       
       {/* Liquid cursor overlay */}
       <LiquidCursor containerRef={sectionRef} intensity={0.6} trail={8} />

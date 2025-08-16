@@ -76,6 +76,16 @@
 
   .marquee { overflow: hidden; position: relative; }
   .marquee-track { display: flex; gap: 3rem; width: max-content; animation: marqueeLeft var(--marquee-duration,30s) linear infinite; will-change: transform; }
+
+  /* Company-specific fonts for logo marquee */
+  .font-nextjs { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .font-react { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .font-typescript { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .font-tailwind { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .font-nodejs { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .font-aws { font-family: 'Amazon Ember', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .font-docker { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .font-git { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
 }
 
 @keyframes heroGhost { 0% { transform: translateX(-120%); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(120%); opacity: 0; } }

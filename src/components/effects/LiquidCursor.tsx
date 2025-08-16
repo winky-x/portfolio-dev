@@ -147,19 +147,31 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
     }
 
-    // Liquid distortion field
+    // Advanced liquid distortion with merging effects
     vec2 liquidDistortion(vec2 uv, vec2 p, float r, float strength) {
       float d = distance(uv, p);
       float influence = exp(-(d * d) / (2.0 * r * r));
       
-      // Create swirling distortion
+      // Create complex swirling distortion
       float angle = atan(uv.y - p.y, uv.x - p.x);
-      float swirl = sin(angle * 3.0 + uTime * 2.0) * 0.1;
+      float swirl = sin(angle * 4.0 + uTime * 3.0) * 0.15;
+      float pulse = sin(uTime * 4.0) * 0.05;
       
       vec2 distortion = vec2(
-        sin(angle + uTime) * swirl * influence * strength,
-        cos(angle + uTime) * swirl * influence * strength
+        sin(angle + uTime + pulse) * swirl * influence * strength,
+        cos(angle + uTime + pulse) * swirl * influence * strength
       );
+      
+      // Add merging effect when near other points
+      for (int i = 0; i < 10; i++) {
+        if (i >= uTrailCount) break;
+        float otherDist = distance(p, uPoints[i]);
+        if (otherDist < 0.3 && otherDist > 0.0) {
+          float mergeStrength = exp(-(otherDist * otherDist) / 0.1) * 0.3;
+          vec2 mergeDir = normalize(p - uPoints[i]);
+          distortion += mergeDir * mergeStrength * influence;
+        }
+      }
       
       return distortion;
     }
@@ -168,42 +180,46 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       vec2 uv = vUv;
       vec2 distortedUV = uv;
       
-      // Apply liquid distortion from cursor trail
+      // Apply enhanced liquid distortion from cursor trail
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
-        float strength = mix(0.8, 1.5, uHoverBoost); // Stronger on hover
-        float radius = mix(0.15, 0.08, float(i) / float(max(uTrailCount-1, 1)));
+        float strength = mix(1.2, 2.0, uHoverBoost); // Much stronger on hover
+        float radius = mix(0.2, 0.1, float(i) / float(max(uTrailCount-1, 1)));
         vec2 distortion = liquidDistortion(uv, uPoints[i], radius, strength);
         distortedUV += distortion;
       }
       
       // Add organic noise for liquid texture
-      float liquidNoise = smoothNoise(distortedUV * 20.0 + uTime * 0.5) * 0.1;
+      float liquidNoise = smoothNoise(distortedUV * 25.0 + uTime * 0.8) * 0.15;
       distortedUV += liquidNoise;
       
-      // Calculate liquid effect intensity
+      // Calculate liquid effect intensity with merging
       float liquidEffect = 0.0;
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
         float d = distance(uv, uPoints[i]);
-        float r = mix(0.25, 0.12, float(i) / float(max(uTrailCount-1, 1)));
+        float r = mix(0.3, 0.15, float(i) / float(max(uTrailCount-1, 1)));
         liquidEffect += exp(-(d * d) / (2.0 * r * r));
       }
       
-      // Enhanced hover effect
-      float hoverIntensity = mix(1.0, 2.5, uHoverBoost);
+      // Enhanced hover effect for dramatic liquid glass
+      float hoverIntensity = mix(1.0, 3.5, uHoverBoost);
       liquidEffect *= hoverIntensity;
       
-      // Create liquid glass appearance
-      float alpha = clamp(liquidEffect * uIntensity, 0.0, 0.8);
+      // Create dramatic liquid glass appearance
+      float alpha = clamp(liquidEffect * uIntensity, 0.0, 0.9);
       
-      // Apple-style liquid glass colors with depth
-      vec3 baseColor = mix(uBase, uAccent, 0.2);
-      vec3 liquidColor = mix(baseColor, vec3(1.0, 1.0, 1.0), 0.3);
+      // Apple-style liquid glass colors with enhanced depth
+      vec3 baseColor = mix(uBase, uAccent, 0.3);
+      vec3 liquidColor = mix(baseColor, vec3(1.0, 1.0, 1.0), 0.4);
       
-      // Add subtle color variation based on distortion
+      // Add dramatic color variation based on distortion
       float distortionAmount = length(distortedUV - uv);
-      liquidColor = mix(liquidColor, uAccent, distortionAmount * 0.5);
+      liquidColor = mix(liquidColor, uAccent, distortionAmount * 0.8);
+      
+      // Add subtle rainbow effect for premium feel
+      float rainbow = sin(distortionAmount * 10.0 + uTime * 2.0) * 0.1;
+      liquidColor += vec3(rainbow, rainbow * 0.5, rainbow * 0.3) * 0.1;
       
       gl_FragColor = vec4(liquidColor, alpha);
     }
