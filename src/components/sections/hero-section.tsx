@@ -10,7 +10,7 @@ import { LogoMarquee } from '@/components/LogoMarquee'
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null)
   return (
-    <section ref={sectionRef} className="relative w-full h-[100vh] overflow-hidden">
+    <section id="hero" ref={sectionRef} className="relative w-full h-[100vh] overflow-hidden">
       {/* Simple gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-black dark:to-black" />
       

@@ -14,6 +14,7 @@ export function Header() {
             </span>
           </Link>
         </div>
+        
         <div className="flex flex-1 items-center justify-end space-x-2">
            <nav className="hidden md:flex items-center gap-6 text-sm">
             <Link href="#projects" className="transition-colors hover:text-foreground/80 text-foreground/60">
