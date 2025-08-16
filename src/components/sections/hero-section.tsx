@@ -15,7 +15,7 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-black dark:to-black" />
       
       {/* Liquid cursor overlay */}
-      <LiquidCursor containerRef={sectionRef} intensity={0.9} trail={10} />
+      <LiquidCursor containerRef={sectionRef} intensity={0.6} trail={6} />
 
       {/* Foreground content */}
       <div className="relative z-30 flex flex-col items-center justify-center h-full text-center px-4">

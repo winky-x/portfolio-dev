@@ -48,25 +48,32 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       const pts = pointsRef.current
       pts.unshift([x, y])
       if (pts.length > (trail || 6)) pts.pop()
-
-      // detect interactive hover (buttons, links, inputs, cards) to enhance liquid effect
-      const elUnder = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null
-      if (elUnder) {
-        const tag = elUnder.tagName.toLowerCase()
-        const isInteractive = ['a', 'button', 'input', 'textarea', 'select', 'label'].includes(tag) || 
-                             elUnder.closest('a,button,[role="button"],input,textarea,select,label') ||
-                             elUnder.closest('.liquid-glass-card, .group, [data-interactive]') ||
-                             elUnder.classList.contains('cursor-pointer') ||
-                             getComputedStyle(elUnder).cursor === 'pointer'
-        
-        setHoverBoost(isInteractive ? 1 : 0)
-      } else {
-        setHoverBoost(0)
-      }
     }
 
+    function onTouch(e: TouchEvent) {
+      const targetEl = containerRef.current
+      if (!targetEl) return
+      const touch = e.touches[0]
+      const rect = targetEl.getBoundingClientRect()
+      const x = (touch.clientX - rect.left) / rect.width
+      const y = 1.0 - (touch.clientY - rect.top) / rect.height
+      const pts = pointsRef.current
+      pts.unshift([x, y])
+      if (pts.length > (trail || 6)) pts.pop()
+    }
+
+    // Mouse events
     el.addEventListener('mousemove', onMove)
-    return () => el.removeEventListener('mousemove', onMove)
+    
+    // Touch events for mobile
+    el.addEventListener('touchmove', onTouch, { passive: true })
+    el.addEventListener('touchstart', onTouch, { passive: true })
+    
+    return () => {
+      el.removeEventListener('mousemove', onMove)
+      el.removeEventListener('touchmove', onTouch)
+      el.removeEventListener('touchstart', onTouch)
+    }
   }, [containerRef, trail])
 
   const uniforms = useMemo(() => {
@@ -116,77 +123,35 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
   `
 
   const fragment = `
-    precision highp float;
+    precision mediump float; // Mobile-optimized precision
     varying vec2 vUv;
 
     uniform float uTime;
     uniform float uIntensity;
     uniform vec3 uBase;
     uniform vec3 uAccent;
-    uniform float uDarkBoost;
     uniform float uHoverBoost;
     uniform int uTrailCount;
     uniform vec2 uPoints[10];
 
-    // High-quality noise for organic movement
-    float hash(vec2 p) {
-      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
-    }
-
+    // Simple, fast noise for mobile
     float noise(vec2 p) {
-      vec2 i = floor(p);
-      vec2 f = fract(p);
-      f = f * f * (3.0 - 2.0 * f);
-      
-      float a = hash(i);
-      float b = hash(i + vec2(1.0, 0.0));
-      float c = hash(i + vec2(0.0, 1.0));
-      float d = hash(i + vec2(1.0, 1.0));
-      
-      return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
     }
 
-    // Fractal noise for realistic liquid texture
-    float fbm(vec2 p) {
-      float value = 0.0;
-      float amplitude = 0.5;
-      float frequency = 1.0;
-      
-      for (int i = 0; i < 4; i++) {
-        value += amplitude * noise(p * frequency);
-        amplitude *= 0.5;
-        frequency *= 2.0;
-      }
-      
-      return value;
-    }
-
-    // Dramatic liquid distortion with refraction
+    // Mobile-optimized liquid distortion
     vec2 liquidDistortion(vec2 uv, vec2 p, float r, float strength) {
       float d = distance(uv, p);
       float influence = exp(-(d * d) / (2.0 * r * r));
       
-      // Create complex swirling distortion like Copilot
+      // Simple swirling for mobile performance
       float angle = atan(uv.y - p.y, uv.x - p.x);
-      float swirl = sin(angle * 5.0 + uTime * 4.0) * 0.25;
-      float pulse = sin(uTime * 6.0) * 0.1;
-      float wave = sin(d * 20.0 - uTime * 3.0) * 0.05;
+      float swirl = sin(angle * 3.0 + uTime * 2.0) * 0.2;
       
       vec2 distortion = vec2(
-        sin(angle + uTime + pulse + wave) * swirl * influence * strength,
-        cos(angle + uTime + pulse + wave) * swirl * influence * strength
+        sin(angle + uTime) * swirl * influence * strength,
+        cos(angle + uTime) * swirl * influence * strength
       );
-      
-      // Add merging effect when near other points
-      for (int i = 0; i < 10; i++) {
-        if (i >= uTrailCount) break;
-        float otherDist = distance(p, uPoints[i]);
-        if (otherDist < 0.4 && otherDist > 0.0) {
-          float mergeStrength = exp(-(otherDist * otherDist) / 0.15) * 0.5;
-          vec2 mergeDir = normalize(p - uPoints[i]);
-          distortion += mergeDir * mergeStrength * influence;
-        }
-      }
       
       return distortion;
     }
@@ -195,50 +160,42 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       vec2 uv = vUv;
       vec2 distortedUV = uv;
       
-      // Apply dramatic liquid distortion from cursor trail
+      // Apply mobile-optimized liquid distortion
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
-        float strength = mix(2.0, 4.0, uHoverBoost); // Much stronger like Copilot
-        float radius = mix(0.25, 0.12, float(i) / float(max(uTrailCount-1, 1)));
+        float strength = mix(1.5, 3.0, uHoverBoost); // Mobile-optimized strength
+        float radius = mix(0.2, 0.1, float(i) / float(max(uTrailCount-1, 1)));
         vec2 distortion = liquidDistortion(uv, uPoints[i], radius, strength);
         distortedUV += distortion;
       }
       
-      // Add fractal noise for realistic liquid texture
-      float liquidNoise = fbm(distortedUV * 30.0 + uTime * 1.2) * 0.2;
+      // Simple noise for mobile
+      float liquidNoise = noise(distortedUV * 15.0 + uTime * 0.8) * 0.1;
       distortedUV += liquidNoise;
       
-      // Calculate liquid effect intensity with enhanced merging
+      // Calculate liquid effect intensity
       float liquidEffect = 0.0;
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
         float d = distance(uv, uPoints[i]);
-        float r = mix(0.35, 0.18, float(i) / float(max(uTrailCount-1, 1)));
+        float r = mix(0.3, 0.15, float(i) / float(max(uTrailCount-1, 1)));
         liquidEffect += exp(-(d * d) / (2.0 * r * r));
       }
       
-      // Dramatic hover effect like Copilot
-      float hoverIntensity = mix(1.0, 5.0, uHoverBoost);
+      // Mobile-optimized hover effect
+      float hoverIntensity = mix(1.0, 3.0, uHoverBoost);
       liquidEffect *= hoverIntensity;
       
-      // Create dramatic liquid glass appearance with depth
-      float alpha = clamp(liquidEffect * uIntensity, 0.0, 0.95);
+      // Create liquid glass appearance
+      float alpha = clamp(liquidEffect * uIntensity, 0.0, 0.8);
       
-      // Premium liquid glass colors with enhanced depth
-      vec3 baseColor = mix(uBase, uAccent, 0.4);
-      vec3 liquidColor = mix(baseColor, vec3(1.0, 1.0, 1.0), 0.5);
+      // Mobile-optimized colors
+      vec3 baseColor = mix(uBase, uAccent, 0.3);
+      vec3 liquidColor = mix(baseColor, vec3(1.0, 1.0, 1.0), 0.4);
       
-      // Add dramatic color variation based on distortion
+      // Simple color variation
       float distortionAmount = length(distortedUV - uv);
-      liquidColor = mix(liquidColor, uAccent, distortionAmount * 1.2);
-      
-      // Add premium rainbow effect for Copilot-like feel
-      float rainbow = sin(distortionAmount * 15.0 + uTime * 3.0) * 0.15;
-      liquidColor += vec3(rainbow, rainbow * 0.6, rainbow * 0.4) * 0.15;
-      
-      // Add depth with subtle shadows
-      float depth = noise(uv * 50.0 + uTime * 0.5) * 0.1;
-      liquidColor += vec3(depth) * 0.1;
+      liquidColor = mix(liquidColor, uAccent, distortionAmount * 0.6);
       
       gl_FragColor = vec4(liquidColor, alpha);
     }
