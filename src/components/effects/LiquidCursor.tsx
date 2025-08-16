@@ -128,46 +128,61 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
     uniform int uTrailCount;
     uniform vec2 uPoints[10];
 
-    // Noise function for organic liquid movement
-    float noise(vec2 p) {
-      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+    // High-quality noise for organic movement
+    float hash(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
     }
 
-    // Smooth noise
-    float smoothNoise(vec2 p) {
+    float noise(vec2 p) {
       vec2 i = floor(p);
       vec2 f = fract(p);
       f = f * f * (3.0 - 2.0 * f);
       
-      float a = noise(i);
-      float b = noise(i + vec2(1.0, 0.0));
-      float c = noise(i + vec2(0.0, 1.0));
-      float d = noise(i + vec2(1.0, 1.0));
+      float a = hash(i);
+      float b = hash(i + vec2(1.0, 0.0));
+      float c = hash(i + vec2(0.0, 1.0));
+      float d = hash(i + vec2(1.0, 1.0));
       
       return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
     }
 
-    // Advanced liquid distortion with merging effects
+    // Fractal noise for realistic liquid texture
+    float fbm(vec2 p) {
+      float value = 0.0;
+      float amplitude = 0.5;
+      float frequency = 1.0;
+      
+      for (int i = 0; i < 4; i++) {
+        value += amplitude * noise(p * frequency);
+        amplitude *= 0.5;
+        frequency *= 2.0;
+      }
+      
+      return value;
+    }
+
+    // Dramatic liquid distortion with refraction
     vec2 liquidDistortion(vec2 uv, vec2 p, float r, float strength) {
       float d = distance(uv, p);
       float influence = exp(-(d * d) / (2.0 * r * r));
       
-      // Create complex swirling distortion
+      // Create complex swirling distortion like Copilot
       float angle = atan(uv.y - p.y, uv.x - p.x);
-      float swirl = sin(angle * 4.0 + uTime * 3.0) * 0.15;
-      float pulse = sin(uTime * 4.0) * 0.05;
+      float swirl = sin(angle * 5.0 + uTime * 4.0) * 0.25;
+      float pulse = sin(uTime * 6.0) * 0.1;
+      float wave = sin(d * 20.0 - uTime * 3.0) * 0.05;
       
       vec2 distortion = vec2(
-        sin(angle + uTime + pulse) * swirl * influence * strength,
-        cos(angle + uTime + pulse) * swirl * influence * strength
+        sin(angle + uTime + pulse + wave) * swirl * influence * strength,
+        cos(angle + uTime + pulse + wave) * swirl * influence * strength
       );
       
       // Add merging effect when near other points
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
         float otherDist = distance(p, uPoints[i]);
-        if (otherDist < 0.3 && otherDist > 0.0) {
-          float mergeStrength = exp(-(otherDist * otherDist) / 0.1) * 0.3;
+        if (otherDist < 0.4 && otherDist > 0.0) {
+          float mergeStrength = exp(-(otherDist * otherDist) / 0.15) * 0.5;
           vec2 mergeDir = normalize(p - uPoints[i]);
           distortion += mergeDir * mergeStrength * influence;
         }
@@ -180,46 +195,50 @@ function FullscreenQuad({ containerRef, intensity, trail }: LiquidCursorProps) {
       vec2 uv = vUv;
       vec2 distortedUV = uv;
       
-      // Apply enhanced liquid distortion from cursor trail
+      // Apply dramatic liquid distortion from cursor trail
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
-        float strength = mix(1.2, 2.0, uHoverBoost); // Much stronger on hover
-        float radius = mix(0.2, 0.1, float(i) / float(max(uTrailCount-1, 1)));
+        float strength = mix(2.0, 4.0, uHoverBoost); // Much stronger like Copilot
+        float radius = mix(0.25, 0.12, float(i) / float(max(uTrailCount-1, 1)));
         vec2 distortion = liquidDistortion(uv, uPoints[i], radius, strength);
         distortedUV += distortion;
       }
       
-      // Add organic noise for liquid texture
-      float liquidNoise = smoothNoise(distortedUV * 25.0 + uTime * 0.8) * 0.15;
+      // Add fractal noise for realistic liquid texture
+      float liquidNoise = fbm(distortedUV * 30.0 + uTime * 1.2) * 0.2;
       distortedUV += liquidNoise;
       
-      // Calculate liquid effect intensity with merging
+      // Calculate liquid effect intensity with enhanced merging
       float liquidEffect = 0.0;
       for (int i = 0; i < 10; i++) {
         if (i >= uTrailCount) break;
         float d = distance(uv, uPoints[i]);
-        float r = mix(0.3, 0.15, float(i) / float(max(uTrailCount-1, 1)));
+        float r = mix(0.35, 0.18, float(i) / float(max(uTrailCount-1, 1)));
         liquidEffect += exp(-(d * d) / (2.0 * r * r));
       }
       
-      // Enhanced hover effect for dramatic liquid glass
-      float hoverIntensity = mix(1.0, 3.5, uHoverBoost);
+      // Dramatic hover effect like Copilot
+      float hoverIntensity = mix(1.0, 5.0, uHoverBoost);
       liquidEffect *= hoverIntensity;
       
-      // Create dramatic liquid glass appearance
-      float alpha = clamp(liquidEffect * uIntensity, 0.0, 0.9);
+      // Create dramatic liquid glass appearance with depth
+      float alpha = clamp(liquidEffect * uIntensity, 0.0, 0.95);
       
-      // Apple-style liquid glass colors with enhanced depth
-      vec3 baseColor = mix(uBase, uAccent, 0.3);
-      vec3 liquidColor = mix(baseColor, vec3(1.0, 1.0, 1.0), 0.4);
+      // Premium liquid glass colors with enhanced depth
+      vec3 baseColor = mix(uBase, uAccent, 0.4);
+      vec3 liquidColor = mix(baseColor, vec3(1.0, 1.0, 1.0), 0.5);
       
       // Add dramatic color variation based on distortion
       float distortionAmount = length(distortedUV - uv);
-      liquidColor = mix(liquidColor, uAccent, distortionAmount * 0.8);
+      liquidColor = mix(liquidColor, uAccent, distortionAmount * 1.2);
       
-      // Add subtle rainbow effect for premium feel
-      float rainbow = sin(distortionAmount * 10.0 + uTime * 2.0) * 0.1;
-      liquidColor += vec3(rainbow, rainbow * 0.5, rainbow * 0.3) * 0.1;
+      // Add premium rainbow effect for Copilot-like feel
+      float rainbow = sin(distortionAmount * 15.0 + uTime * 3.0) * 0.15;
+      liquidColor += vec3(rainbow, rainbow * 0.6, rainbow * 0.4) * 0.15;
+      
+      // Add depth with subtle shadows
+      float depth = noise(uv * 50.0 + uTime * 0.5) * 0.1;
+      liquidColor += vec3(depth) * 0.1;
       
       gl_FragColor = vec4(liquidColor, alpha);
     }

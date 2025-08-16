@@ -15,15 +15,15 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-black dark:to-black" />
       
       {/* Liquid cursor overlay */}
-      <LiquidCursor containerRef={sectionRef} intensity={0.6} trail={8} />
+      <LiquidCursor containerRef={sectionRef} intensity={0.9} trail={10} />
 
       {/* Foreground content */}
       <div className="relative z-30 flex flex-col items-center justify-center h-full text-center px-4">
         <div className="pointer-events-none">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline tracking-tighter leading-tight text-black dark:text-white">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-headline tracking-tighter leading-tight text-black dark:text-white drop-shadow-lg">
             Full-Stack Developer & UI/UX Designer
             </h1>
-            <p className="mt-4 max-w-3xl mx-auto text-center text-lg md:text-xl text-black/80 dark:text-white/80">
+            <p className="mt-6 max-w-4xl mx-auto text-center text-xl md:text-2xl text-black/90 dark:text-white/90 font-medium leading-relaxed">
             Building modern web applications with cutting-edge technologies. Specializing in React, Next.js, and cloud solutions.
             </p>
         </div>
