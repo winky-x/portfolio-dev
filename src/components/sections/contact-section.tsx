@@ -23,6 +23,8 @@ import {
 import { Label } from '../ui/label'
 import { cn } from '@/lib/utils'
 import { AnimatedPlaceholder } from '../animated-placeholder'
+import { PremiumCard } from '@/components/ui/premium-card'
+import { TouchRipple } from '@/components/ui/mobile-gestures'
 
 const businessSchema = z.object({
   business: z.string().min(10, { message: 'Please describe your project in at least 10 characters.' }),
@@ -103,16 +105,24 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="w-full">
-        <h3 className="text-center text-sm font-medium text-muted-foreground mb-2">
-            Ready to start your next project?
-        </h3>
-      <form onSubmit={handleSubmit(handleInitialSubmit)}>
-        <div className={cn(
-            'relative rounded-full bg-background/50 dark:bg-black/50 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10 flex items-center shadow-md',
-            isFocused || businessValue
-                ? 'shadow-lg shadow-primary/20 dark:shadow-primary/10 ring-primary/20'
-                : 'shadow-black/5'
-        )}>
+        <TouchRipple>
+            <PremiumCard
+                className="backdrop-blur-sm bg-white/20 dark:bg-black/20 border-white/30"
+                neonColor="#6366f1"
+                glow={true}
+                tilt={true}
+                scale={true}
+            >
+                <h3 className="text-center text-sm font-medium text-muted-foreground mb-4">
+                    Ready to start your next project?
+                </h3>
+                <form onSubmit={handleSubmit(handleInitialSubmit)}>
+                    <div className={cn(
+                        'relative rounded-full bg-background/50 dark:bg-black/50 backdrop-blur-md transition-all duration-300 ring-1 ring-black/10 flex items-center shadow-md',
+                        isFocused || businessValue
+                            ? 'shadow-lg shadow-primary/20 dark:shadow-primary/10 ring-primary/20'
+                            : 'shadow-black/5'
+                    )}>
             <Label htmlFor="business" className="sr-only">Describe your store</Label>
             {(!businessValue && !isFocused) && (
                <AnimatedPlaceholder 
@@ -148,8 +158,10 @@ export function ContactSection() {
                 <span className="sr-only">Send</span>
             </Button>
         </div>
-         {errors.business && <p className="text-destructive text-sm mt-2 text-center">{errors.business.message}</p>}
-      </form>
+                     {errors.business && <p className="text-destructive text-sm mt-2 text-center">{errors.business.message}</p>}
+                </form>
+            </PremiumCard>
+        </TouchRipple>
 
       <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
         <DialogContent>

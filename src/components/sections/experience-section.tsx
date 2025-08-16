@@ -3,6 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { StaggeredContainer, StaggeredItem } from '@/components/ui/animated-entrance'
+import { PremiumCard } from '@/components/ui/premium-card'
 
 const experience = [
   {
@@ -66,7 +68,13 @@ const ExperienceItem = ({ item, index }: { item: typeof experience[0]; index: nu
           isVisible ? 'scale-100' : 'scale-0'
         )}></div>
       </div>
-      <Card className={cn('transition-transform duration-500', isVisible ? 'translate-y-0' : 'translate-y-4')}>
+      <PremiumCard
+        className="transition-transform duration-500 backdrop-blur-sm"
+        neonColor="#10b981"
+        glow={true}
+        tilt={true}
+        scale={true}
+      >
         <CardHeader>
           <CardTitle className="text-xl font-headline">{item.role}</CardTitle>
           <CardDescription className="text-base !mt-1">
@@ -74,7 +82,7 @@ const ExperienceItem = ({ item, index }: { item: typeof experience[0]; index: nu
           </CardDescription>
           <p className="!mt-4 text-muted-foreground">{item.description}</p>
         </CardHeader>
-      </Card>
+      </PremiumCard>
     </div>
   );
 };
@@ -83,14 +91,18 @@ export function ExperienceSection() {
   return (
     <section id="experience" className="py-20 lg:py-32">
       <div className="container">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tighter">
-            Career Journey
-          </h2>
-          <p className="mt-2 max-w-2xl mx-auto text-lg text-muted-foreground">
-            Tracing my path through the world of web development.
-          </p>
-        </div>
+        <StaggeredContainer stagger={0.1}>
+          <StaggeredItem direction="up" distance={40}>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tighter">
+                Career Journey
+              </h2>
+              <p className="mt-2 max-w-2xl mx-auto text-lg text-muted-foreground">
+                Tracing my path through the world of web development.
+              </p>
+            </div>
+          </StaggeredItem>
+        </StaggeredContainer>
         <div className="relative">
           <div className="flex flex-col md:grid md:grid-cols-2 gap-12">
             {experience.map((item, index) => (
